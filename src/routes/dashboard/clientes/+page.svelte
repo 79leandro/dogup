@@ -1,5 +1,5 @@
 <script lang="ts">
-	// GOB 360° - Client Management Page
+	// DOG 360° - Client Management Page
 	const clientes = [
 		{ cnpj: '12.345.678/0001-90', nome: 'Empresa Alpha Ltda', regime: 'SIMPLES_NACIONAL', situacao: 'REGULAR' },
 		{ cnpj: '98.765.432/0001-54', nome: 'Comercial Beta S.A.', regime: 'NORMAL', situacao: 'IRREGULAR' },
@@ -32,7 +32,7 @@
 	<!-- Header -->
 	<div class="flex items-center justify-between">
 		<div>
-			<h1 class="font-display text-2xl font-bold text-terminal-100">GOB 360°</h1>
+			<h1 class="font-display text-2xl font-bold text-terminal-100">DOG 360°</h1>
 			<p class="text-terminal-500">Gestão completa da base de clientes</p>
 		</div>
 		<div class="flex gap-3">

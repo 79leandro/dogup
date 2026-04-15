@@ -23,7 +23,7 @@ export const actions: Actions = {
 		}
 
 		// Demo authentication - in production, validate against Prisma
-		if (email === 'admin@gob.com.br' && senha === 'admin123') {
+		if (email === 'admin@dog.com.br' && senha === 'admin123') {
 			// Create session token
 			const token = 'demo-session-token';
 

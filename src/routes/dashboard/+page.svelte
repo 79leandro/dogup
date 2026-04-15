@@ -1,6 +1,6 @@
 <script lang="ts">
 	import EcacAlertBanner from '$lib/components/dashboard/EcacAlertBanner.svelte';
-	import Gob360Card from '$lib/components/dashboard/Gob360Card.svelte';
+	import Dog360Card from '$lib/components/dashboard/Dog360Card.svelte';
 	import ObligationsPanel from '$lib/components/dashboard/ObligationsPanel.svelte';
 	import FiscalStatusCard from '$lib/components/dashboard/FiscalStatusCard.svelte';
 	import InstallmentsCard from '$lib/components/dashboard/InstallmentsCard.svelte';
@@ -16,9 +16,9 @@
 
 	<!-- Main Stats Grid -->
 	<div class="grid grid-cols-12 gap-6">
-		<!-- GOB 360° - Client Management -->
+		<!-- DOG 360° - Client Management -->
 		<div class="col-span-4">
-			<Gob360Card
+			<Dog360Card
 				total={data.stats.totalClientes}
 				simplesNacional={data.stats.simplesNacional}
 				normal={data.stats.normal}

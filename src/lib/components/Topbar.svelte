@@ -3,7 +3,7 @@
 
 	const breadcrumbMap: Record<string, string[]> = {
 		'/dashboard': ['Dashboard'],
-		'/dashboard/clientes': ['Clientes', 'GOB 360°'],
+		'/dashboard/clientes': ['Clientes', 'DOG 360°'],
 		'/dashboard/obrigacoes': ['Obrigações', 'Acessórias'],
 		'/dashboard/obrigacoes/dctfweb': ['Obrigações', 'DCTFWeb em Andamento'],
 		'/dashboard/situacao-fiscal': ['Fiscal', 'Situação Federal'],

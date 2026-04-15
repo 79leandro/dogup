@@ -27,10 +27,10 @@ export async function getSession(event: RequestEvent): Promise<SessionUser | nul
 	if (token === 'demo-session-token') {
 		return {
 			id: 'demo-user-id',
-			email: 'admin@gob.com.br',
+			email: 'admin@dog.com.br',
 			nome: 'Administrador',
 			empresaId: 'demo-empresa-id',
-			empresaNome: 'GOB Assessoria'
+			empresaNome: 'DOG Assessoria'
 		};
 	}
 

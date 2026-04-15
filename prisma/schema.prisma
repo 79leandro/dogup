@@ -1,4 +1,4 @@
-// Prisma Schema for GOB Fiscal Compliance System
+// Prisma Schema for DOG Fiscal Compliance System
 // Multi-company architecture for accounting offices
 
 generator client {
@@ -71,6 +71,7 @@ model Cliente {
   obrigacoes     Obrigacao[]
   parcelamentos  Parcelamento[]
   certificados   Certificado[]
+  procuracoes    Procuracao[]
   mensagens      Mensagem[]
   createdAt      DateTime          @default(now())
   updatedAt      DateTime          @updatedAt
