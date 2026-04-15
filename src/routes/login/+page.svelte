@@ -155,7 +155,7 @@
 			<!-- Demo credentials hint -->
 			<div class="mt-8 p-4 rounded-xl bg-terminal-800/50 border border-terminal-700 text-center">
 				<p class="text-xs text-terminal-500 mb-2">Credenciais de demonstração:</p>
-				<p class="text-sm text-terminal-300">admin@dogup.com.br / admin123</p>
+				<p class="text-sm text-terminal-300">admin@dog.com.br / admin123</p>
 			</div>
 		</div>
 	</div>
