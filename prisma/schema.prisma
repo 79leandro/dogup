@@ -1,0 +1,244 @@
+// Prisma Schema for GOB Fiscal Compliance System
+// Multi-company architecture for accounting offices
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// EMPRESA - Accounting Office / Company
+// ============================================
+model Empresa {
+  id        String   @id @default(cuid())
+  nome      String
+  slug      String   @unique
+  usuarios  Usuario[]
+  clientes  Cliente[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ============================================
+// USUÁRIO - User belonging to an Empresa
+// ============================================
+model Usuario {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  senha     String   // bcrypt hashed
+  nome      String
+  cargo     String?
+  empresa   Empresa  @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+  empresaId String
+  sessoes   Sessao[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([empresaId])
+}
+
+// ============================================
+// SESSÃO - Authentication sessions
+// ============================================
+model Sessao {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  usuario   Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  usuarioId String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([token])
+  @@index([usuarioId])
+}
+
+// ============================================
+// CLIENTE - CNPJ / Client of the empresa
+// ============================================
+model Cliente {
+  id             String            @id @default(cuid())
+  cnpj           String            @unique
+  nomeRazao      String
+  nomeFantasia   String?
+  regime         RegimeTributario
+  empresa        Empresa           @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+  empresaId      String
+  situacaoFiscal SituacaoFiscal
+  obrigacoes     Obrigacao[]
+  parcelamentos  Parcelamento[]
+  certificados   Certificado[]
+  mensagens      Mensagem[]
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+
+  @@index([empresaId])
+  @@index([cnpj])
+}
+
+enum RegimeTributario {
+  SIMPLES_NACIONAL
+  NORMAL
+}
+
+enum SituacaoFiscal {
+  REGULAR
+  REGULARIZADO
+  IRREGULAR
+}
+
+// ============================================
+// OBRIGAÇÃO ACESSÓRIA - DCTFWeb, etc.
+// ============================================
+model Obrigacao {
+  id          String           @id @default(cuid())
+  cliente     Cliente          @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+  clienteId   String
+  tipo        TipoObrigacao
+  ano         Int
+  mes         Int
+  status      StatusObrigacao
+  reciboUrl   String?
+  observacao  String?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  @@index([clienteId])
+  @@index([tipo, ano, mes])
+  @@index([status])
+}
+
+enum TipoObrigacao {
+  DCTFWEB
+  GFIP
+  DIRF
+  RAIS
+  // extensor for future types
+}
+
+enum StatusObrigacao {
+  ENTREGUE
+  NAO_ENTREGUE
+  INCONSISTENCIA
+  EM_PROCESSAMENTO
+  OUTROS
+}
+
+// ============================================
+// PARCELAMENTO - Federal Installments
+// ============================================
+model Parcelamento {
+  id          String             @id @default(cuid())
+  cliente     Cliente            @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+  clienteId   String
+  tipo        TipoParcelamento
+  total       Decimal            @db.Decimal(15, 2)
+  parcelas    Int
+  parcelasEmAtraso Int            @default(0)
+  valorAtraso Decimal?            @db.Decimal(15, 2)
+  inicio      DateTime
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  @@index([clienteId])
+  @@index([tipo])
+}
+
+enum TipoParcelamento {
+  PGFN
+  NAO_PREVIDENCIARIO
+  SIMPLES_NACIONAL
+  SIMPLIFICADO
+  PREVIDENCIARIO
+}
+
+// ============================================
+// CERTIFICADO - Digital Certificate
+// ============================================
+model Certificado {
+  id          String   @id @default(cuid())
+  cliente     Cliente  @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+  clienteId   String
+  tipo        String   // A1, A3
+  cnpj        String?  // emissor do certificado
+  validade    DateTime
+  responsavel String? // quem está em posse
+  status      StatusCertificado
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([clienteId])
+  @@index([validade])
+}
+
+enum StatusCertificado {
+  VALIDO
+  VENCIDO
+  CANCELADO
+}
+
+// ============================================
+// PROCURACAO - e-CAC Power of Attorney
+// ============================================
+model Procuracao {
+  id          String           @id @default(cuid())
+  cliente     Cliente          @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+  clienteId   String
+  tipo        TipoProcuracao
+  validade    DateTime
+  status      StatusProcuracao
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  @@index([clienteId])
+  @@index([validade])
+}
+
+enum TipoProcuracao {
+  COMPLETA
+  PARCIAL
+  LIMITADA
+}
+
+enum StatusProcuracao {
+  VALIDA
+  VENCIDA
+  CANCELADA
+  SEM_PROCURACAO
+}
+
+// ============================================
+// MENSAGEM - e-CAC Mailbox Messages
+// ============================================
+model Mensagem {
+  id          String           @id @default(cuid())
+  cliente     Cliente          @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+  clienteId   String
+  titulo      String
+  conteudo    String
+  tipo        TipoMensagem
+  relevancia  RelevanciaMensagem
+  lida        Boolean          @default(false)
+  data        DateTime
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  @@index([clienteId])
+  @@index([relevancia, lida])
+}
+
+enum TipoMensagem {
+  NOTIFICACAO
+  INTIMACAO
+  TERMO_EXCLUSAO
+  INFORMATIVA
+  OTIMOS
+}
+
+enum RelevanciaMensagem {
+  RELEVANTE
+  NAO_RELEVANTE
+}
