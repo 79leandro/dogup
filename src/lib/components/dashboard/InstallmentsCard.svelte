@@ -15,7 +15,7 @@
 		return 'success';
 	}
 
-	const validParcelamentos = parcelamentos.filter(p => p.total > 0);
+	const validParcelamentos = parcelamentos.filter((p: Parcelamento) => p.total > 0);
 </script>
 
 <div class="card card-hover p-6 h-full">
@@ -31,7 +31,7 @@
 					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
 				</svg>
 			</div>
-			{#if validParcelamentos.some(p => p.emAtraso > 0)}
+			{#if validParcelamentos.some((p: Parcelamento) => p.emAtraso > 0)}
 				<span class="absolute -top-1 -right-1 w-4 h-4 bg-semantic-critical rounded-full flex items-center justify-center animate-pulse">
 					<span class="text-white text-[10px] font-bold">!</span>
 				</span>

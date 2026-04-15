@@ -37,8 +37,8 @@ export async function getSession(event: RequestEvent): Promise<SessionUser | nul
 	return null;
 }
 
-export function requireAuth(event: RequestEvent): SessionUser {
-	const user = getSession(event);
+export async function requireAuth(event: RequestEvent): Promise<SessionUser> {
+	const user = await getSession(event);
 	if (!user) {
 		throw new Error('Unauthorized');
 	}
