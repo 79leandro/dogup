@@ -6,7 +6,7 @@
 	<!-- Header -->
 	<div class="flex items-center justify-between mb-6">
 		<div>
-			<h2 class="font-display font-bold text-lg text-terminal-100">DOG 360°</h2>
+			<h2 class="font-display font-bold text-lg text-terminal-100">DOGUP 360°</h2>
 			<p class="text-sm text-terminal-500">Gestão de Clientes</p>
 		</div>
 		<div class="w-10 h-10 rounded-xl bg-semantic-info/10 flex items-center justify-center">

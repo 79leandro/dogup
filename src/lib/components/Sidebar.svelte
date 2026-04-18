@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import { sidebarState } from '$lib/stores/ui';
 
 	interface NavItem {
 		label: string;
@@ -8,6 +9,8 @@
 		badge?: number;
 		children?: NavItem[];
 	}
+
+	let { data } = $props();
 
 	const mainNav: NavItem[] = [
 		{
@@ -92,33 +95,111 @@
 	function isActive(href: string): boolean {
 		return $page.url.pathname.startsWith(href);
 	}
+
+	function toggleSidebar() {
+		sidebarState.update(current => {
+			if (current === 'expanded') return 'collapsed';
+			return 'expanded';
+		});
+	}
+
+	function closeMobile() {
+		sidebarState.set('expanded');
+	}
+
+	$effect(() => {
+		const handleResize = () => {
+			if (window.innerWidth < 768) {
+				sidebarState.set('mobile');
+			} else if ($sidebarState === 'mobile') {
+				sidebarState.set('expanded');
+			}
+		};
+		handleResize();
+		window.addEventListener('resize', handleResize);
+		return () => window.removeEventListener('resize', handleResize);
+	});
+
+	const isCollapsed = $derived($sidebarState === 'collapsed');
+	const isMobile = $derived($sidebarState === 'mobile');
+	const isExpanded = $derived($sidebarState === 'expanded');
 </script>
 
-<aside class="fixed left-0 top-0 h-screen w-64 bg-terminal-800/80 backdrop-blur-xl border-r border-terminal-700 flex flex-col z-50">
+<!-- Mobile Overlay -->
+{#if isMobile}
+	<div
+		class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 transition-opacity"
+		onclick={closeMobile}
+		aria-hidden="true"
+	></div>
+{/if}
+
+<!-- Sidebar -->
+<aside
+	class="fixed left-0 top-0 h-screen bg-terminal-800/95 backdrop-blur-xl border-r border-terminal-700 flex flex-col z-50 transition-all duration-300 ease-out
+		{isExpanded ? 'w-64' : ''}
+		{isCollapsed ? 'w-[72px]' : ''}
+		{isMobile ? 'w-64 translate-x-0' : ''}
+		{!isMobile && !isExpanded && !isCollapsed ? 'w-64' : ''}"
+	aria-label="Navegação principal"
+>
 	<!-- Logo -->
-	<div class="p-6 border-b border-terminal-700">
-		<div class="flex items-center gap-3">
-			<div class="w-10 h-10 rounded-xl bg-gradient-to-br from-semantic-accent to-semantic-info flex items-center justify-center">
-				<span class="text-white font-bold text-lg">D</span>
+	<div class="p-4 border-b border-terminal-700">
+		{#if isExpanded}
+			<div class="flex items-center justify-between">
+				<div class="flex items-center gap-3">
+					<div class="w-10 h-10 rounded-xl bg-gradient-to-br from-semantic-accent to-semantic-info flex items-center justify-center">
+						<span class="text-white font-bold text-lg">D</span>
+					</div>
+					<div>
+						<h1 class="font-display font-bold text-lg text-terminal-100">DOGUP</h1>
+						<p class="text-xs text-terminal-500">Contábil</p>
+					</div>
+				</div>
+				<button
+					onclick={toggleSidebar}
+					class="p-2 rounded-lg hover:bg-terminal-700 text-terminal-400 hover:text-terminal-100 transition-colors"
+					aria-label="Recolher menu"
+				>
+					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m5 5h8"/>
+					</svg>
+				</button>
 			</div>
-			<div>
-				<h1 class="font-display font-bold text-lg text-terminal-100">DOGUP</h1>
-				<p class="text-xs text-terminal-500">Contábil</p>
+		{:else}
+			<div class="flex flex-col items-center gap-2">
+				<div class="w-10 h-10 rounded-xl bg-gradient-to-br from-semantic-accent to-semantic-info flex items-center justify-center">
+					<span class="text-white font-bold text-lg">D</span>
+				</div>
+				<button
+					onclick={() => sidebarState.set(isMobile ? 'expanded' : 'collapsed')}
+					class="p-2 rounded-lg hover:bg-terminal-700 text-terminal-400 hover:text-terminal-100 transition-colors"
+					aria-label="Expandir menu"
+				>
+					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"/>
+					</svg>
+				</button>
 			</div>
-		</div>
+		{/if}
 	</div>
 
 	<!-- Navigation -->
-	<nav class="flex-1 overflow-y-auto p-4 space-y-6">
+	<nav class="flex-1 overflow-y-auto p-3 space-y-4">
 		<!-- Main -->
 		<div class="space-y-1">
 			{#each mainNav as item}
 				<a
 					href={item.href}
-					class="nav-item {isActive(item.href) ? 'nav-item-active' : ''}"
+					class="nav-item {isActive(item.href) ? 'nav-item-active' : ''}
+						{isCollapsed ? 'justify-center px-2' : ''}"
+					title={isCollapsed ? item.label : undefined}
+					aria-label={isCollapsed ? item.label : undefined}
 				>
 					{@html item.icon}
-					<span>{item.label}</span>
+					{#if !isCollapsed}
+						<span>{item.label}</span>
+					{/if}
 				</a>
 			{/each}
 		</div>
@@ -127,26 +208,41 @@
 		<div>
 			<button
 				onclick={() => toggleSection('obrigacoes')}
-				class="flex items-center justify-between w-full px-4 py-2 text-sm font-medium text-terminal-400 hover:text-terminal-200 transition-colors"
+				class="flex items-center w-full px-3 py-2 text-sm font-medium text-terminal-400 hover:text-terminal-200 transition-colors
+					{isCollapsed ? 'justify-center' : 'justify-between'}"
+				title={isCollapsed ? 'Obrigações' : undefined}
+				aria-label="Toggle Obrigações section"
+				aria-expanded={expandedSections.obrigacoes}
 			>
-				<span>Obrigações</span>
-				<svg class="w-4 h-4 transition-transform {expandedSections.obrigacoes ? 'rotate-180' : ''}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				{#if !isCollapsed}
+					<span>Obrigações</span>
+				{/if}
+				<svg
+					class="w-4 h-4 transition-transform duration-200 {expandedSections.obrigacoes ? 'rotate-180' : ''}
+						{isCollapsed ? '' : 'ml-auto'}"
+					fill="none" stroke="currentColor" viewBox="0 0 24 24"
+				>
 					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
 				</svg>
 			</button>
 			{#if expandedSections.obrigacoes}
-				<div class="mt-1 space-y-1 animate-slide-up">
+				<div class="mt-1 space-y-1 {isCollapsed ? 'pl-0' : 'pl-4'}">
 					{#each obligationsNav as item}
 						<a
 							href={item.href}
-							class="nav-item {isActive(item.href) ? 'nav-item-active' : ''}"
+							class="nav-item {isActive(item.href) ? 'nav-item-active' : ''}
+								{isCollapsed ? 'justify-center px-2' : ''}"
+							title={isCollapsed ? item.label : undefined}
+							aria-label={isCollapsed ? item.label : undefined}
 						>
 							{@html item.icon}
-							<span>{item.label}</span>
-							{#if item.badge}
-								<span class="ml-auto px-2 py-0.5 text-xs font-medium bg-semantic-critical/20 text-semantic-critical rounded-full">
-									{item.badge}
-								</span>
+							{#if !isCollapsed}
+								<span>{item.label}</span>
+								{#if item.badge}
+									<span class="ml-auto px-2 py-0.5 text-xs font-medium bg-semantic-critical/20 text-semantic-critical rounded-full">
+										{item.badge}
+									</span>
+								{/if}
 							{/if}
 						</a>
 					{/each}
@@ -158,26 +254,41 @@
 		<div>
 			<button
 				onclick={() => toggleSection('fiscal')}
-				class="flex items-center justify-between w-full px-4 py-2 text-sm font-medium text-terminal-400 hover:text-terminal-200 transition-colors"
+				class="flex items-center w-full px-3 py-2 text-sm font-medium text-terminal-400 hover:text-terminal-200 transition-colors
+					{isCollapsed ? 'justify-center' : 'justify-between'}"
+				title={isCollapsed ? 'Fiscal' : undefined}
+				aria-label="Toggle Fiscal section"
+				aria-expanded={expandedSections.fiscal}
 			>
-				<span>Fiscal</span>
-				<svg class="w-4 h-4 transition-transform {expandedSections.fiscal ? 'rotate-180' : ''}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				{#if !isCollapsed}
+					<span>Fiscal</span>
+				{/if}
+				<svg
+					class="w-4 h-4 transition-transform duration-200 {expandedSections.fiscal ? 'rotate-180' : ''}
+						{isCollapsed ? '' : 'ml-auto'}"
+					fill="none" stroke="currentColor" viewBox="0 0 24 24"
+				>
 					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
 				</svg>
 			</button>
 			{#if expandedSections.fiscal}
-				<div class="mt-1 space-y-1 animate-slide-up">
+				<div class="mt-1 space-y-1 {isCollapsed ? 'pl-0' : 'pl-4'}">
 					{#each fiscalNav as item}
 						<a
 							href={item.href}
-							class="nav-item {isActive(item.href) ? 'nav-item-active' : ''}"
+							class="nav-item {isActive(item.href) ? 'nav-item-active' : ''}
+								{isCollapsed ? 'justify-center px-2' : ''}"
+							title={isCollapsed ? item.label : undefined}
+							aria-label={isCollapsed ? item.label : undefined}
 						>
 							{@html item.icon}
-							<span>{item.label}</span>
-							{#if item.badge}
-								<span class="ml-auto px-2 py-0.5 text-xs font-medium bg-semantic-warning/20 text-semantic-warning rounded-full">
-									{item.badge}
-								</span>
+							{#if !isCollapsed}
+								<span>{item.label}</span>
+								{#if item.badge}
+									<span class="ml-auto px-2 py-0.5 text-xs font-medium bg-semantic-warning/20 text-semantic-warning rounded-full">
+										{item.badge}
+									</span>
+								{/if}
 							{/if}
 						</a>
 					{/each}
@@ -189,26 +300,41 @@
 		<div>
 			<button
 				onclick={() => toggleSection('ferramentas')}
-				class="flex items-center justify-between w-full px-4 py-2 text-sm font-medium text-terminal-400 hover:text-terminal-200 transition-colors"
+				class="flex items-center w-full px-3 py-2 text-sm font-medium text-terminal-400 hover:text-terminal-200 transition-colors
+					{isCollapsed ? 'justify-center' : 'justify-between'}"
+				title={isCollapsed ? 'Ferramentas' : undefined}
+				aria-label="Toggle Ferramentas section"
+				aria-expanded={expandedSections.ferramentas}
 			>
-				<span>Ferramentas</span>
-				<svg class="w-4 h-4 transition-transform {expandedSections.ferramentas ? 'rotate-180' : ''}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				{#if !isCollapsed}
+					<span>Ferramentas</span>
+				{/if}
+				<svg
+					class="w-4 h-4 transition-transform duration-200 {expandedSections.ferramentas ? 'rotate-180' : ''}
+						{isCollapsed ? '' : 'ml-auto'}"
+					fill="none" stroke="currentColor" viewBox="0 0 24 24"
+				>
 					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
 				</svg>
 			</button>
 			{#if expandedSections.ferramentas}
-				<div class="mt-1 space-y-1 animate-slide-up">
+				<div class="mt-1 space-y-1 {isCollapsed ? 'pl-0' : 'pl-4'}">
 					{#each toolsNav as item}
 						<a
 							href={item.href}
-							class="nav-item {isActive(item.href) ? 'nav-item-active' : ''}"
+							class="nav-item {isActive(item.href) ? 'nav-item-active' : ''}
+								{isCollapsed ? 'justify-center px-2' : ''}"
+							title={isCollapsed ? item.label : undefined}
+							aria-label={isCollapsed ? item.label : undefined}
 						>
 							{@html item.icon}
-							<span>{item.label}</span>
-							{#if item.badge}
-								<span class="ml-auto px-2 py-0.5 text-xs font-medium bg-semantic-critical/20 text-semantic-critical rounded-full">
-									{item.badge}
-								</span>
+							{#if !isCollapsed}
+								<span>{item.label}</span>
+								{#if item.badge}
+									<span class="ml-auto px-2 py-0.5 text-xs font-medium bg-semantic-critical/20 text-semantic-critical rounded-full">
+										{item.badge}
+									</span>
+								{/if}
 							{/if}
 						</a>
 					{/each}
@@ -218,20 +344,27 @@
 	</nav>
 
 	<!-- Footer -->
-	<div class="p-4 border-t border-terminal-700">
-		<div class="flex items-center gap-3 px-4 py-3 rounded-lg bg-terminal-700/50">
-			<div class="w-8 h-8 rounded-full bg-gradient-to-br from-semantic-success to-semantic-info flex items-center justify-center">
-				<span class="text-white text-sm font-medium">AD</span>
+	<div class="p-3 border-t border-terminal-700">
+		<div class="flex items-center gap-3 px-3 py-3 rounded-lg bg-terminal-700/50
+			{isCollapsed ? 'justify-center' : ''}">
+			<div class="w-8 h-8 rounded-full bg-gradient-to-br from-semantic-success to-semantic-info flex items-center justify-center flex-shrink-0">
+				<span class="text-white text-sm font-medium">{data.user?.nome?.charAt(0) ?? 'U'}</span>
 			</div>
-			<div class="flex-1 min-w-0">
-				<p class="text-sm font-medium text-terminal-100 truncate">Administrador</p>
-				<p class="text-xs text-terminal-500 truncate">DOGUP Contábil</p>
-			</div>
-			<a href="/logout" class="p-1.5 rounded-lg hover:bg-terminal-600 text-terminal-400 hover:text-terminal-200 transition-colors">
-				<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
-				</svg>
-			</a>
+			{#if !isCollapsed}
+				<div class="flex-1 min-w-0">
+					<p class="text-sm font-medium text-terminal-100 truncate">{data.user?.nome ?? 'Usuário'}</p>
+					<p class="text-xs text-terminal-500 truncate">{data.user?.empresaNome ?? 'Empresa'}</p>
+				</div>
+				<a
+					href="/logout"
+					class="p-1.5 rounded-lg hover:bg-terminal-600 text-terminal-400 hover:text-terminal-200 transition-colors"
+					aria-label="Sair"
+				>
+					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+					</svg>
+				</a>
+			{/if}
 		</div>
 	</div>
 </aside>

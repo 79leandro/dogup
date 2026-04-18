@@ -1,8 +1,8 @@
 <script lang="ts">
 	let { validos, vencidos, proximasVencimento } = $props();
 
-	const total = validos + vencidos + proximasVencimento;
-	const statusOk = vencidos === 0 && proximasVencimento === 0;
+	const total = $derived(validos + vencidos + proximasVencimento);
+	const statusOk = $derived(vencidos === 0 && proximasVencimento === 0);
 </script>
 
 <div class="card card-hover p-5">

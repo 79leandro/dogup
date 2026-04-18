@@ -1,13 +1,12 @@
 import { clsx, type ClassValue } from 'clsx';
+import { formatCNPJ as formatCNPJUtil } from './cnpj';
 
 export function cn(...inputs: ClassValue[]): string {
 	return clsx(inputs);
 }
 
 export function formatCnpj(cnpj: string): string {
-	const cleaned = cnpj.replace(/\D/g, '');
-	if (cleaned.length !== 14) return cnpj;
-	return `${cleaned.slice(0, 2)}.${cleaned.slice(2, 5)}.${cleaned.slice(5, 8)}/${cleaned.slice(8, 12)}-${cleaned.slice(12)}`;
+	return formatCNPJUtil(cnpj);
 }
 
 export function formatCurrency(value: number): string {

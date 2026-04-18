@@ -125,7 +125,7 @@
 
 				<div class="flex items-center justify-between text-sm">
 					<label class="flex items-center gap-2 cursor-pointer">
-						<input type="checkbox" class="w-4 h-4 rounded border-terminal-600 bg-terminal-700 text-semantic-accent focus:ring-semantic-accent/50" />
+						<input type="checkbox" name="rememberMe" class="w-4 h-4 rounded border-terminal-600 bg-terminal-700 text-semantic-accent focus:ring-semantic-accent/50" />
 						<span class="text-terminal-400">Lembrar-me</span>
 					</label>
 					<a href="/recuperar-senha" class="text-semantic-accent hover:text-semantic-accent/80 transition-colors">
@@ -155,7 +155,7 @@
 			<!-- Demo credentials hint -->
 			<div class="mt-8 p-4 rounded-xl bg-terminal-800/50 border border-terminal-700 text-center">
 				<p class="text-xs text-terminal-500 mb-2">Credenciais de demonstração:</p>
-				<p class="text-sm text-terminal-300">admin@dog.com.br / admin123</p>
+				<p class="text-sm text-terminal-300">admin@dogup.com.br / admin123</p>
 			</div>
 		</div>
 	</div>

@@ -1,11 +1,12 @@
 import type { Actions, PageServerLoad } from './$types';
 import { fail, redirect } from '@sveltejs/kit';
-import { SESSION_COOKIE, SESSION_MAX_AGE } from '$lib/server/config';
+import { SESSION_COOKIE } from '$lib/server/config';
+import { login, setSessionCookie, getSession } from '$lib/server/auth';
 
 export const load: PageServerLoad = async (event) => {
 	// Check if already logged in
-	const token = event.cookies.get(SESSION_COOKIE);
-	if (token) {
+	const user = await getSession(event);
+	if (user) {
 		throw redirect(302, '/dashboard');
 	}
 
@@ -17,28 +18,20 @@ export const actions: Actions = {
 		const formData = await event.request.formData();
 		const email = formData.get('email') as string;
 		const senha = formData.get('senha') as string;
+		const rememberMe = formData.get('rememberMe') === 'on';
 
 		if (!email || !senha) {
 			return fail(400, { error: 'Email e senha são obrigatórios', email });
 		}
 
-		// Demo authentication - in production, validate against Prisma
-		if (email === 'admin@dog.com.br' && senha === 'admin123') {
-			// Create session token
-			const token = 'demo-session-token';
+		const result = await login(email, senha, rememberMe);
 
-			// Set cookie
-			event.cookies.set(SESSION_COOKIE, token, {
-				path: '/',
-				httpOnly: true,
-				secure: process.env.NODE_ENV === 'production',
-				sameSite: 'lax',
-				maxAge: SESSION_MAX_AGE
-			});
-
-			throw redirect(302, '/dashboard');
+		if (!result.success) {
+			return fail(401, { error: result.error, email });
 		}
 
-		return fail(401, { error: 'Credenciais inválidas', email });
+		setSessionCookie(event, result.token, rememberMe);
+
+		throw redirect(302, '/dashboard');
 	}
 };

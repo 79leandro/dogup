@@ -1,11 +1,11 @@
 <script lang="ts">
 	let { total, emAndamento, entregue, percentualEntrega } = $props();
 
-	const statusItems = [
+	const statusItems = $derived([
 		{ label: 'Entregue', value: entregue, color: 'success', icon: '✓' },
 		{ label: 'Em Andamento', value: emAndamento, color: 'warning', icon: '↻' },
 		{ label: 'Não Entregue', value: 0, color: 'critical', icon: '!' }
-	];
+	]);
 </script>
 
 <div class="card card-hover p-6 h-full">
@@ -22,7 +22,7 @@
 		</div>
 	</div>
 
-	<!-- Progress Section -->
+	<!-- progress Section -->
 	<div class="mb-6">
 		<div class="flex items-end justify-between mb-2">
 			<span class="text-sm text-terminal-400">Taxa de Entrega</span>

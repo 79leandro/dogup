@@ -1,16 +1,88 @@
 <script lang="ts">
-	// Obligations page
-	let selectedYear = $state('2024');
+	import { onMount } from 'svelte';
+	import DataTable from '$lib/components/ui/DataTable.svelte';
+	import { notifications } from '$lib/stores/notifications';
+
+	interface Obrigacao {
+		id: string;
+		clienteId: string;
+		tipo: string;
+		ano: number;
+		mes: number;
+		status: string;
+		reciboUrl: string | null;
+		observacao: string | null;
+		cliente: {
+			id: string;
+			cnpj: string;
+			nomeRazao: string;
+		};
+	}
+
+	let obrigacoes = $state<Obrigacao[]>([]);
+	let isLoading = $state(true);
+	let stats = $state({ total: 0, entregue: 0, percentualEntrega: 0 });
+
+	let selectedYear = $state(new Date().getFullYear().toString());
 	let selectedMonth = $state('todos');
 	let selectedType = $state('todos');
 
-	const obligations = [
-		{ cnpj: '12.345.678/0001-90', cliente: 'Empresa Alpha Ltda', tipo: 'DCTFWEB', ano: 2024, mes: 3, status: 'ENTREGUE', recibo: '2024-03-15' },
-		{ cnpj: '98.765.432/0001-54', cliente: 'Comercial Beta S.A.', tipo: 'DCTFWEB', ano: 2024, mes: 3, status: 'EM_PROCESSAMENTO', recibo: null },
-		{ cnpj: '45.678.901/0001-23', cliente: 'Serviços Gamma Eireli', tipo: 'DCTFWEB', ano: 2024, mes: 2, status: 'INCONSISTENCIA', recibo: null },
-		{ cnpj: '78.901.234/0001-67', cliente: 'Indústria Delta Ltda', tipo: 'DCTFWEB', ano: 2024, mes: 3, status: 'ENTREGUE', recibo: '2024-03-18' },
-		{ cnpj: '34.567.890/0001-45', cliente: 'Tech Solutions Eireli', tipo: 'DCTFWEB', ano: 2024, mes: 3, status: 'ENTREGUE', recibo: '2024-03-20' }
+	const columns = [
+		{ key: 'cnpj', label: 'CNPJ', sortable: true, width: '140px' },
+		{ key: 'cliente', label: 'Cliente', sortable: true },
+		{ key: 'tipo', label: 'Tipo', sortable: true, width: '100px', align: 'center' as const },
+		{
+			key: 'periodo',
+			label: 'Período',
+			sortable: true,
+			width: '100px',
+			align: 'center' as const
+		},
+		{
+			key: 'status',
+			label: 'Status',
+			sortable: true,
+			width: '130px',
+			align: 'center' as const
+		},
+		{ key: 'recibo', label: 'Recibo/Observação', width: '150px' }
 	];
+
+	async function fetchObrigacoes() {
+		isLoading = true;
+		try {
+			const params = new URLSearchParams();
+			if (selectedYear !== 'todos') params.set('ano', selectedYear);
+			if (selectedMonth !== 'todos') params.set('mes', selectedMonth);
+			if (selectedType !== 'todos') params.set('tipo', selectedType);
+
+			const response = await fetch(`/api/obrigacoes?${params.toString()}`);
+			const data = await response.json();
+
+			if (response.ok) {
+				obrigacoes = data.obrigacoes || [];
+			} else {
+				notifications.error('Erro ao carregar obrigações', data.error);
+			}
+		} catch (error) {
+			notifications.error('Erro de conexão', 'Não foi possível carregar as obrigações');
+		} finally {
+			isLoading = false;
+		}
+	}
+
+	async function fetchStats() {
+		try {
+			const response = await fetch('/api/obrigacoes?stats=true');
+			const data = await response.json();
+
+			if (response.ok) {
+				stats = data.stats;
+			}
+		} catch (error) {
+			// Silently fail for stats
+		}
+	}
 
 	function getStatusBadge(status: string): { class: string; label: string } {
 		const badges: Record<string, { class: string; label: string }> = {
@@ -27,6 +99,32 @@
 		const months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
 		return months[month - 1];
 	}
+
+	function formatCNPJ(cnpj: string): string {
+		if (cnpj.length !== 14) return cnpj;
+		return `${cnpj.slice(0, 2)}.${cnpj.slice(2, 5)}.${cnpj.slice(5, 8)}/${cnpj.slice(8, 12)}-${cnpj.slice(12, 14)}`;
+	}
+
+	function formatRow(row: any) {
+		const badge = getStatusBadge(row.status);
+		return {
+			...row,
+			cnpj: formatCNPJ(row.cliente.cnpj),
+			cliente: row.cliente.nomeRazao,
+			periodo: `${getMonthName(row.mes)}/${row.ano}`,
+			status: badge.label,
+			recibo: row.observacao || row.reciboUrl || '-'
+		};
+	}
+
+	function handleFilterChange() {
+		fetchObrigacoes();
+	}
+
+	onMount(() => {
+		fetchObrigacoes();
+		fetchStats();
+	});
 </script>
 
 <div class="space-y-6 animate-fade-in">
@@ -38,12 +136,12 @@
 		</div>
 	</div>
 
-	<!-- Filters -->
+	<!-- Filters Card -->
 	<div class="card p-4">
-		<div class="flex items-center gap-4">
+		<div class="flex flex-wrap items-end gap-4">
 			<div>
-				<label class="label text-xs">Tipo</label>
-				<select bind:value={selectedType} class="input w-40">
+				<label for="filter-tipo" class="label text-xs">Tipo</label>
+				<select id="filter-tipo" bind:value={selectedType} onchange={handleFilterChange} class="input w-40">
 					<option value="todos">Todos</option>
 					<option value="DCTFWEB">DCTFWeb</option>
 					<option value="GFIP">GFIP</option>
@@ -51,16 +149,16 @@
 				</select>
 			</div>
 			<div>
-				<label class="label text-xs">Ano</label>
-				<select bind:value={selectedYear} class="input w-28">
-					<option value="2024">2024</option>
-					<option value="2023">2023</option>
-					<option value="2022">2022</option>
+				<label for="filter-ano" class="label text-xs">Ano</label>
+				<select id="filter-ano" bind:value={selectedYear} onchange={handleFilterChange} class="input w-28">
+					<option value={new Date().getFullYear().toString()}>{new Date().getFullYear()}</option>
+					<option value={(new Date().getFullYear() - 1).toString()}>{new Date().getFullYear() - 1}</option>
+					<option value={(new Date().getFullYear() - 2).toString()}>{new Date().getFullYear() - 2}</option>
 				</select>
 			</div>
 			<div>
-				<label class="label text-xs">Mês</label>
-				<select bind:value={selectedMonth} class="input w-32">
+				<label for="filter-mes" class="label text-xs">Mês</label>
+				<select id="filter-mes" bind:value={selectedMonth} onchange={handleFilterChange} class="input w-32">
 					<option value="todos">Todos</option>
 					<option value="1">Janeiro</option>
 					<option value="2">Fevereiro</option>
@@ -68,48 +166,32 @@
 					<option value="4">Abril</option>
 					<option value="5">Maio</option>
 					<option value="6">Junho</option>
+					<option value="7">Julho</option>
+					<option value="8">Agosto</option>
+					<option value="9">Setembro</option>
+					<option value="10">Outubro</option>
+					<option value="11">Novembro</option>
+					<option value="12">Dezembro</option>
 				</select>
 			</div>
 			<div class="flex-1"></div>
-			<div class="flex items-end gap-2">
+			<div class="flex items-center gap-2 px-4 py-2 rounded-lg bg-terminal-700/50">
 				<span class="text-sm text-terminal-400">Taxa de entrega:</span>
-				<span class="text-xl font-bold text-semantic-success">83.7%</span>
+				<span class="text-xl font-bold text-semantic-success">{stats.percentualEntrega}%</span>
 			</div>
 		</div>
 	</div>
 
-	<!-- Table -->
-	<div class="card">
-		<div class="overflow-x-auto">
-			<table class="w-full">
-				<thead class="bg-terminal-700/50">
-					<tr>
-						<th class="text-left px-4 py-3 text-xs font-medium text-terminal-400 uppercase">CNPJ</th>
-						<th class="text-left px-4 py-3 text-xs font-medium text-terminal-400 uppercase">Cliente</th>
-						<th class="text-left px-4 py-3 text-xs font-medium text-terminal-400 uppercase">Tipo</th>
-						<th class="text-left px-4 py-3 text-xs font-medium text-terminal-400 uppercase">Período</th>
-						<th class="text-left px-4 py-3 text-xs font-medium text-terminal-400 uppercase">Status</th>
-						<th class="text-left px-4 py-3 text-xs font-medium text-terminal-400 uppercase">Recibo</th>
-					</tr>
-				</thead>
-				<tbody class="divide-y divide-terminal-700">
-					{#each obligations as obg}
-						{@const badge = getStatusBadge(obg.status)}
-						<tr class="hover:bg-terminal-700/30 transition-colors">
-							<td class="px-4 py-4 text-sm font-mono text-terminal-200">{obg.cnpj}</td>
-							<td class="px-4 py-4 text-sm text-terminal-100">{obg.cliente}</td>
-							<td class="px-4 py-4 text-sm text-terminal-300">{obg.tipo}</td>
-							<td class="px-4 py-4 text-sm text-terminal-300">{getMonthName(obg.mes)}/{obg.ano}</td>
-							<td class="px-4 py-4">
-								<span class="status-badge {badge.class}">{badge.label}</span>
-							</td>
-							<td class="px-4 py-4 text-sm text-terminal-400">
-								{obg.recibo || '-'}
-							</td>
-						</tr>
-					{/each}
-				</tbody>
-			</table>
-		</div>
-	</div>
+	<!-- Obligations Table -->
+	<DataTable
+		data={obrigacoes}
+		{columns}
+		rowKey="id"
+		searchable={true}
+		searchPlaceholder="Buscar por CNPJ ou cliente..."
+		pageSize={10}
+		emptyMessage="Nenhuma obrigação encontrada"
+		loading={isLoading}
+		formatRow={formatRow}
+	/>
 </div>

@@ -1,14 +1,30 @@
 <script lang="ts">
-	// Installments Page
-	const parcelamentos = [
-		{ cnpj: '12.345.678/0001-90', cliente: 'Empresa Alpha Ltda', tipo: 'PGFN', total: 48, emAtraso: 21, valorTotal: 125000.00, valorAtraso: 45000.00 },
-		{ cnpj: '98.765.432/0001-54', cliente: 'Comercial Beta S.A.', tipo: 'SIMPLES_NACIONAL', total: 60, emAtraso: 13, valorTotal: 89000.00, valorAtraso: 12000.00 },
-		{ cnpj: '45.678.901/0001-23', cliente: 'Serviços Gamma Eireli', tipo: 'SIMPLIFICADO', total: 36, emAtraso: 6, valorTotal: 45000.00, valorAtraso: 5000.00 },
-		{ cnpj: '78.901.234/0001-67', cliente: 'Indústria Delta Ltda', tipo: 'PREVIDENCIARIO', total: 24, emAtraso: 0, valorTotal: 67000.00, valorAtraso: 0 }
+	import DataTable from '$lib/components/ui/DataTable.svelte';
+
+	let { data } = $props();
+
+	const columns = [
+		{ key: 'cnpj', label: 'CNPJ', sortable: true, width: '140px' },
+		{ key: 'cliente', label: 'Cliente', sortable: true },
+		{ key: 'tipo', label: 'Tipo', sortable: true, width: '130px', align: 'center' as const },
+		{ key: 'parcelas', label: 'Parcelas', sortable: true, width: '90px', align: 'center' as const },
+		{ key: 'parcelasEmAtraso', label: 'Em Atraso', sortable: true, width: '100px', align: 'center' as const },
+		{ key: 'valorTotal', label: 'Valor Total', sortable: true, width: '120px', align: 'right' as const },
+		{ key: 'valorAtraso', label: 'Valor Atraso', sortable: true, width: '120px', align: 'right' as const }
 	];
 
-	function formatCurrency(value: number): string {
-		return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+	const summaryItems = $derived(data.summary);
+
+	function formatCurrency(value: unknown): string {
+		if (!value) return 'R$ 0,00';
+		const num = typeof value === 'string' ? parseFloat(value) : Number(value);
+		if (isNaN(num)) return 'R$ 0,00';
+		return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(num);
+	}
+
+	function formatCNPJ(cnpj: string): string {
+		if (cnpj.length !== 14) return cnpj;
+		return `${cnpj.slice(0, 2)}.${cnpj.slice(2, 5)}.${cnpj.slice(5, 8)}/${cnpj.slice(8, 12)}-${cnpj.slice(12, 14)}`;
 	}
 
 	function getTipoLabel(tipo: string): string {
@@ -20,6 +36,18 @@
 			NAO_PREVIDENCIARIO: 'Não Prev.'
 		};
 		return labels[tipo] || tipo;
+	}
+
+	function formatRow(row: any) {
+		return {
+			...row,
+			cnpj: formatCNPJ(row.cliente.cnpj),
+			cliente: row.cliente.nomeRazao,
+			tipo: getTipoLabel(row.tipo),
+			total: row.parcelas,
+			valorTotal: formatCurrency(row.total),
+			valorAtraso: formatCurrency(row.valorAtraso)
+		};
 	}
 </script>
 
@@ -39,14 +67,8 @@
 	</div>
 
 	<!-- Summary Cards -->
-	<div class="grid grid-cols-5 gap-4">
-		{#each [
-			{ tipo: 'PGFN', total: 29, atraso: 21, color: 'critical' },
-			{ tipo: 'Simples', total: 52, atraso: 13, color: 'warning' },
-			{ tipo: 'Simplif.', total: 24, atraso: 6, color: 'warning' },
-			{ tipo: 'Não Prev.', total: 0, atraso: 0, color: 'success' },
-			{ tipo: 'Prev.', total: 0, atraso: 0, color: 'success' }
-		] as item}
+	<div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+		{#each summaryItems as item}
 			<div class="card p-4 text-center">
 				<div class="text-xs text-terminal-500 uppercase mb-2">{item.tipo}</div>
 				<div class="text-2xl font-bold text-terminal-100">{item.total}</div>
@@ -58,46 +80,26 @@
 					<div class="mt-1 text-xs text-semantic-success">Ok</div>
 				{/if}
 			</div>
+		{:else}
+			{#each ['PGFN', 'Simples', 'Simplif.', 'Não Prev.', 'Prev.'] as tipo, i}
+				<div class="card p-4 text-center">
+					<div class="text-xs text-terminal-500 uppercase mb-2">{tipo}</div>
+					<div class="text-2xl font-bold text-terminal-100">0</div>
+					<div class="mt-1 text-xs text-semantic-success">Ok</div>
+				</div>
+			{/each}
 		{/each}
 	</div>
 
 	<!-- Table -->
-	<div class="card">
-		<div class="overflow-x-auto">
-			<table class="w-full">
-				<thead class="bg-terminal-700/50">
-					<tr>
-						<th class="text-left px-4 py-3 text-xs font-medium text-terminal-400 uppercase">CNPJ</th>
-						<th class="text-left px-4 py-3 text-xs font-medium text-terminal-400 uppercase">Cliente</th>
-						<th class="text-left px-4 py-3 text-xs font-medium text-terminal-400 uppercase">Tipo</th>
-						<th class="text-center px-4 py-3 text-xs font-medium text-terminal-400 uppercase">Parcelas</th>
-						<th class="text-center px-4 py-3 text-xs font-medium text-terminal-400 uppercase">Em Atraso</th>
-						<th class="text-right px-4 py-3 text-xs font-medium text-terminal-400 uppercase">Valor Total</th>
-						<th class="text-right px-4 py-3 text-xs font-medium text-terminal-400 uppercase">Valor Atraso</th>
-					</tr>
-				</thead>
-				<tbody class="divide-y divide-terminal-700">
-					{#each parcelamentos as p}
-						<tr class="hover:bg-terminal-700/30">
-							<td class="px-4 py-4 text-sm font-mono text-terminal-200">{p.cnpj}</td>
-							<td class="px-4 py-4 text-sm text-terminal-100">{p.cliente}</td>
-							<td class="px-4 py-4 text-sm text-terminal-300">{getTipoLabel(p.tipo)}</td>
-							<td class="px-4 py-4 text-sm text-center text-terminal-100">{p.total}</td>
-							<td class="px-4 py-4 text-center">
-								{#if p.emAtraso > 0}
-									<span class="status-badge status-critical">{p.emAtraso}</span>
-								{:else}
-									<span class="status-badge status-success">0</span>
-								{/if}
-							</td>
-							<td class="px-4 py-4 text-sm text-right text-terminal-100">{formatCurrency(p.valorTotal)}</td>
-							<td class="px-4 py-4 text-sm text-right {p.valorAtraso > 0 ? 'text-semantic-critical' : 'text-terminal-400'}">
-								{formatCurrency(p.valorAtraso)}
-							</td>
-						</tr>
-					{/each}
-				</tbody>
-			</table>
-		</div>
-	</div>
+	<DataTable
+		data={data.parcelamentos}
+		{columns}
+		rowKey="id"
+		searchable={true}
+		searchPlaceholder="Buscar por CNPJ ou cliente..."
+		pageSize={10}
+		emptyMessage="Nenhum parcelamento encontrado"
+		formatRow={formatRow}
+	/>
 </div>

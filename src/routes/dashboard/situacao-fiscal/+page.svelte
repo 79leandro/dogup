@@ -1,26 +1,47 @@
 <script lang="ts">
-	// Fiscal Status Page
-	const clientes = [
-		{ cnpj: '12.345.678/0001-90', nome: 'Empresa Alpha Ltda', situacao: 'REGULAR', since: '2024-01-01' },
-		{ cnpj: '98.765.432/0001-54', nome: 'Comercial Beta S.A.', situacao: 'IRREGULAR', since: '2024-02-15' },
-		{ cnpj: '45.678.901/0001-23', nome: 'Serviços Gamma Eireli', situacao: 'REGULARIZADO', since: '2024-03-01' },
-		{ cnpj: '78.901.234/0001-67', nome: 'Indústria Delta Ltda', situacao: 'REGULAR', since: '2024-01-15' },
-		{ cnpj: '34.567.890/0001-45', nome: 'Tech Solutions Eireli', situacao: 'IRREGULAR', since: '2024-03-10' }
+	import DataTable from '$lib/components/ui/DataTable.svelte';
+	import ChartDoughnut from '$lib/components/charts/ChartDoughnut.svelte';
+
+	let { data } = $props();
+
+	const stats = $derived(data.stats);
+	const clientes = $derived(data.clientes);
+
+	const columns = [
+		{ key: 'cnpj', label: 'CNPJ', sortable: true, width: '140px' },
+		{ key: 'nomeRazao', label: 'Cliente', sortable: true },
+		{ key: 'situacaoFiscal', label: 'Status', sortable: true, width: '120px', align: 'center' as const },
+		{ key: 'regime', label: 'Regime', sortable: true, width: '120px', align: 'center' as const }
 	];
 
-	const stats = {
-		regular: { count: 90, percentage: 41.5 },
-		regularizado: { count: 33, percentage: 15.2 },
-		irregular: { count: 94, percentage: 43.3 }
-	};
-
-	function getSituacaoBadge(situacao: string) {
+	function getSituacaoBadge(situacao: string): { class: string; label: string } {
 		const badges: Record<string, { class: string; label: string }> = {
 			REGULAR: { class: 'status-success', label: 'Regular' },
 			REGULARIZADO: { class: 'status-warning', label: 'Regularizado' },
 			IRREGULAR: { class: 'status-critical', label: 'Irregular' }
 		};
-		return badges[situacao];
+		return badges[situacao] || { class: '', label: situacao };
+	}
+
+	function formatCNPJ(cnpj: string): string {
+		if (cnpj.length !== 14) return cnpj;
+		return `${cnpj.slice(0, 2)}.${cnpj.slice(2, 5)}.${cnpj.slice(5, 8)}/${cnpj.slice(8, 12)}-${cnpj.slice(12, 14)}`;
+	}
+
+	function formatRow(row: any) {
+		const situacao = getSituacaoBadge(row.situacaoFiscal);
+		const regimeLabel = row.regime === 'SIMPLES_NACIONAL' ? 'Simples' : 'Normal';
+		return {
+			...row,
+			cnpj: formatCNPJ(row.cnpj),
+			situacaoFiscal: situacao.label,
+			regime: regimeLabel
+		};
+	}
+
+	function formatDate(date: Date | string): string {
+		const d = typeof date === 'string' ? new Date(date) : date;
+		return d.toLocaleDateString('pt-BR');
 	}
 </script>
 
@@ -32,42 +53,37 @@
 	</div>
 
 	<!-- Stats -->
-	<div class="grid grid-cols-3 gap-6">
+	<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
 		<div class="card p-5 border-l-4 border-l-semantic-success">
-			<div class="text-3xl font-bold text-semantic-success">{stats.regular.count}</div>
+			<div class="text-3xl font-bold text-semantic-success">{stats.regular}</div>
 			<div class="text-sm text-terminal-400 mt-1">Clientes Regulares</div>
-			<div class="text-xs text-terminal-500 mt-1">{stats.regular.percentage}% do total</div>
+			<div class="text-xs text-terminal-500 mt-1">{stats.percentages.regular}% do total</div>
 		</div>
 		<div class="card p-5 border-l-4 border-l-semantic-warning">
-			<div class="text-3xl font-bold text-semantic-warning">{stats.regularizado.count}</div>
+			<div class="text-3xl font-bold text-semantic-warning">{stats.regularizado}</div>
 			<div class="text-sm text-terminal-400 mt-1">Em Regularização</div>
-			<div class="text-xs text-terminal-500 mt-1">{stats.regularizado.percentage}% do total</div>
+			<div class="text-xs text-terminal-500 mt-1">{stats.percentages.regularizado}% do total</div>
 		</div>
 		<div class="card p-5 border-l-4 border-l-semantic-critical">
-			<div class="text-3xl font-bold text-semantic-critical">{stats.irregular.count}</div>
+			<div class="text-3xl font-bold text-semantic-critical">{stats.irregular}</div>
 			<div class="text-sm text-terminal-400 mt-1">Irregulares</div>
-			<div class="text-xs text-terminal-500 mt-1">{stats.irregular.percentage}% do total</div>
+			<div class="text-xs text-terminal-500 mt-1">{stats.percentages.irregular}% do total</div>
 		</div>
 	</div>
 
 	<!-- Chart + Table -->
-	<div class="grid grid-cols-3 gap-6">
+	<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 		<!-- Doughnut Chart -->
-		<div class="card p-6">
+		<div class="card p-5">
 			<h3 class="font-semibold text-terminal-100 mb-4">Distribuição</h3>
-			<div class="flex justify-center">
-				<svg width="200" height="200" class="transform -rotate-90">
-					<circle cx="100" cy="100" r="80" fill="none" stroke="#334155" stroke-width="20"/>
-					<circle cx="100" cy="100" r="80" fill="none" stroke="#10B981" stroke-width="20" stroke-dasharray="207" stroke-dashoffset="0" stroke-linecap="round"/>
-					<circle cx="100" cy="100" r="80" fill="none" stroke="#F59E0B" stroke-width="20" stroke-dasharray="76" stroke-dashoffset="-207" stroke-linecap="round"/>
-					<circle cx="100" cy="100" r="80" fill="none" stroke="#EF4444" stroke-width="20" stroke-dasharray="217" stroke-dashoffset="-283" stroke-linecap="round"/>
-				</svg>
-				<div class="absolute flex flex-col items-center justify-center">
-					<span class="text-3xl font-bold text-terminal-100">217</span>
-					<span class="text-xs text-terminal-500">Total</span>
-				</div>
+			<div class="h-56">
+				<ChartDoughnut
+					data={[stats.regular, stats.regularizado, stats.irregular]}
+					labels={['Regular', 'Regularizado', 'Irregular']}
+					colors={['#10B981', '#F59E0B', '#EF4444']}
+				/>
 			</div>
-			<div class="mt-6 space-y-2">
+			<div class="mt-4 space-y-2">
 				<div class="flex items-center gap-2">
 					<div class="w-3 h-3 rounded-full bg-semantic-success"></div>
 					<span class="text-sm text-terminal-400">Regular</span>
@@ -84,30 +100,17 @@
 		</div>
 
 		<!-- Table -->
-		<div class="col-span-2 card">
-			<div class="overflow-x-auto">
-				<table class="w-full">
-					<thead class="bg-terminal-700/50">
-						<tr>
-							<th class="text-left px-4 py-3 text-xs font-medium text-terminal-400 uppercase">CNPJ</th>
-							<th class="text-left px-4 py-3 text-xs font-medium text-terminal-400 uppercase">Cliente</th>
-							<th class="text-left px-4 py-3 text-xs font-medium text-terminal-400 uppercase">Status</th>
-							<th class="text-left px-4 py-3 text-xs font-medium text-terminal-400 uppercase">Desde</th>
-						</tr>
-					</thead>
-					<tbody class="divide-y divide-terminal-700">
-						{#each clientes as cliente}
-							{@const badge = getSituacaoBadge(cliente.situacao)}
-							<tr class="hover:bg-terminal-700/30">
-								<td class="px-4 py-4 text-sm font-mono text-terminal-200">{cliente.cnpj}</td>
-								<td class="px-4 py-4 text-sm text-terminal-100">{cliente.nome}</td>
-								<td class="px-4 py-4"><span class="status-badge {badge.class}">{badge.label}</span></td>
-								<td class="px-4 py-4 text-sm text-terminal-400">{cliente.since}</td>
-							</tr>
-						{/each}
-					</tbody>
-				</table>
-			</div>
+		<div class="lg:col-span-2">
+			<DataTable
+				data={clientes}
+				{columns}
+				rowKey="id"
+				searchable={true}
+				searchPlaceholder="Buscar por CNPJ ou cliente..."
+				pageSize={10}
+				emptyMessage="Nenhum cliente encontrado"
+				formatRow={formatRow}
+			/>
 		</div>
 	</div>
 </div>

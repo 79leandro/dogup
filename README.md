@@ -13,7 +13,7 @@ Sistema de monitoramento de conformidade fiscal para escritórios de contabilida
 ## Funcionalidades
 
 - **Dashboard**: Visão consolidada da conformidade fiscal
-- **DOG 360°**: Gestão completa da base de clientes
+- **DOGUP 360°**: Gestão completa da base de clientes
 - **Obrigações Acessórias**: Monitoramento DCTFWeb e outras
 - **Situação Fiscal Federal**: Status de regularidade
 - **Parcelamentos Federais**: Acompanhamento de débitos

@@ -1,4 +1,4 @@
-// Prisma Schema for DOG Fiscal Compliance System
+// Prisma Schema for DOGUP Fiscal Compliance System
 // Multi-company architecture for accounting offices
 
 generator client {
@@ -7,7 +7,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 // ============================================
@@ -60,21 +59,28 @@ model Sessao {
 // CLIENTE - CNPJ / Client of the empresa
 // ============================================
 model Cliente {
-  id             String            @id @default(cuid())
-  cnpj           String            @unique
-  nomeRazao      String
-  nomeFantasia   String?
-  regime         RegimeTributario
-  empresa        Empresa           @relation(fields: [empresaId], references: [id], onDelete: Cascade)
-  empresaId      String
-  situacaoFiscal SituacaoFiscal
-  obrigacoes     Obrigacao[]
-  parcelamentos  Parcelamento[]
-  certificados   Certificado[]
-  procuracoes    Procuracao[]
-  mensagens      Mensagem[]
-  createdAt      DateTime          @default(now())
-  updatedAt      DateTime          @updatedAt
+  id                  String            @id @default(cuid())
+  cnpj                String            @unique
+  nomeRazao           String
+  nomeFantasia        String?
+  regime              RegimeTributario
+  empresa             Empresa           @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+  empresaId           String
+  situacaoFiscal      SituacaoFiscal
+  logradouro          String?
+  cidade              String?
+  uf                  String?
+  cep                 String?
+  email               String?
+  telefone            String?
+  responsavelTecnico   String?
+  obrigacoes          Obrigacao[]
+  parcelamentos       Parcelamento[]
+  certificados        Certificado[]
+  procuracoes         Procuracao[]
+  mensagens           Mensagem[]
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
 
   @@index([empresaId])
   @@index([cnpj])

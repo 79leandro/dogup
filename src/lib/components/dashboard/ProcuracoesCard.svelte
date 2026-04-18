@@ -1,12 +1,12 @@
 <script lang="ts">
 	let { emDia, proximoVencimento, vencidas } = $props();
 
-	const total = emDia + proximoVencimento + vencidas;
-	const percentage = {
-		emDia: (emDia / total) * 100,
-		proximo: (proximoVencimento / total) * 100,
-		vencidas: (vencidas / total) * 100
-	};
+	const total = $derived(emDia + proximoVencimento + vencidas);
+	const percentage = $derived({
+		emDia: total > 0 ? (emDia / total) * 100 : 0,
+		proximo: total > 0 ? (proximoVencimento / total) * 100 : 0,
+		vencidas: total > 0 ? (vencidas / total) * 100 : 0
+	});
 </script>
 
 <div class="card card-hover p-5">
@@ -25,7 +25,7 @@
 
 	<!-- Semicircle Gauge -->
 	<div class="relative flex justify-center py-2">
-		<svg width="160" height="90" viewBox="0 0 160 90">
+		<svg width="160" height="90" viewBox="0 0 160 90" aria-hidden="true">
 			<!-- Background arc -->
 			<path
 				d="M 20 80 A 60 60 0 0 1 140 80"
