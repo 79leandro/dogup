@@ -51,7 +51,11 @@
       "Bash(npm run:*)",
       "Bash(npm ls:*)",
       "Bash(node -e \"import\\('./node_modules/@tailwindcss/postcss/dist/index.js'\\).then\\(m => console.log\\('loaded', Object.keys\\(m\\)\\)\\)\" 2>&1)",
-      "Bash(npm audit:*)"
+      "Bash(npm audit:*)",
+      "Bash(netstat -ano | grep -E \"5173|5174|3000|3031\" | grep LISTENING)",
+      "Bash(taskkill /F /PID 29060 2>/dev/null; netstat -ano | grep -E \"5173|5174|3000\" | grep LISTENING || echo \"Ports cleared\")",
+      "Bash(taskkill //F //PID 29060)",
+      "Bash(netstat -ano | grep -E \"5173|5174|3000\" | grep LISTENING || echo \"Portas livres\")"
     ]
   }
 }

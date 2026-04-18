@@ -6,6 +6,7 @@
 		getCNPJErrorMessage,
 		isCNPJAlfanumerico
 	} from '$lib/utils/cnpj';
+	import { fetchCNPJData, mapSituacaoFiscal } from '$lib/services/receitaFederal';
 
 	interface Props {
 		cliente?: {
@@ -30,6 +31,7 @@
 	let { cliente, onSave, onCancel }: Props = $props();
 
 	let isLoading = $state(false);
+	let isSearching = $state(false);
 
 	// Initialize form data directly without referencing cliente prop
 	let formData = $state({
@@ -86,6 +88,62 @@
 	function handleCEPInput(e: Event) {
 		const input = e.target as HTMLInputElement;
 		formData.cep = formatCEP(input.value);
+	}
+
+	async function handleBuscarCNPJ() {
+		const cnpjClean = formData.cnpj.replace(/\D/g, '');
+
+		if (cnpjClean.length !== 14) {
+			notifications.warning('CNPJ incompleto', 'Digite os 14 dígitos do CNPJ');
+			return;
+		}
+
+		if (!validateCNPJ(formData.cnpj)) {
+			notifications.warning('CNPJ inválido', 'Verifique o número digitado');
+			return;
+		}
+
+		isSearching = true;
+
+		try {
+			const result = await fetchCNPJData(cnpjClean);
+
+			if (result.success && result.data) {
+				const data = result.data;
+
+				// Auto-fill form with fetched data
+				formData.nomeRazao = data.nomeRazao || formData.nomeRazao;
+				formData.nomeFantasia = data.nomeFantasia || formData.nomeFantasia;
+
+				// Build complete address
+				const parts = [data.logradouro, data.numero, data.complemento]
+					.filter(Boolean)
+					.join(', ');
+				formData.logradouro = parts || formData.logradouro;
+
+				formData.cidade = data.cidade || formData.cidade;
+				formData.uf = data.uf || formData.uf;
+				formData.cep = data.cep ? data.cep.replace(/(\d{5})(\d{3})/, '$1-$2') : formData.cep;
+				formData.telefone = data.telefone || formData.telefone;
+				formData.email = data.email || formData.email;
+
+				// Auto-detect fiscal situation if not set
+				if (data.situacaoCadastral) {
+					const mapped = mapSituacaoFiscal(data.situacaoCadastral);
+					if (mapped === 'IRREGULAR') {
+						formData.situacaoFiscal = 'IRREGULAR';
+					}
+				}
+
+				notifications.success('Dados carregados', `CNPJ ${data.cnpj} encontrado na Receita Federal`);
+			} else {
+				notifications.error('CNPJ não encontrado', result.error || 'Verifique o número digitado');
+			}
+		} catch (error) {
+			notifications.error('Erro na consulta', 'Não foi possível acessar a Receita Federal');
+		} finally {
+			isSearching = false;
+		}
 	}
 
 	function validateCNPJWithError(cnpj: string): boolean {
@@ -145,8 +203,8 @@
 
 <form onsubmit={handleSubmit} class="space-y-6">
 	<!-- CNPJ -->
-	<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-		<div>
+	<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+		<div class="md:col-span-2">
 			<label for="cnpj" class="label">CNPJ *</label>
 			<input
 				type="text"
@@ -154,7 +212,7 @@
 				value={formData.cnpj}
 				oninput={handleCNPJInput}
 				class="input {cnpjError ? 'input-error' : ''}"
-				placeholder="00.000.000/0000-00 ou 00.ABC.000/0001-00"
+				placeholder="00.000.000/0000-00"
 				maxlength="18"
 				required
 			/>
@@ -167,13 +225,35 @@
 			{/if}
 		</div>
 
-		<div>
-			<label for="regime" class="label">Regime Tributário *</label>
-			<select id="regime" bind:value={formData.regime} class="input">
-				<option value="SIMPLES_NACIONAL">Simples Nacional</option>
-				<option value="NORMAL">Normal (Lucro Presumido/Real)</option>
-			</select>
+		<div class="flex items-end">
+			<button
+				type="button"
+				onclick={handleBuscarCNPJ}
+				disabled={isSearching}
+				class="btn btn-ghost w-full flex items-center justify-center gap-2"
+			>
+				{#if isSearching}
+					<svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+						<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+						<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+					</svg>
+					Buscando...
+				{:else}
+					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+					</svg>
+					Buscar CNPJ
+				{/if}
+			</button>
 		</div>
+	</div>
+
+	<div>
+		<label for="regime" class="label">Regime Tributário *</label>
+		<select id="regime" bind:value={formData.regime} class="input">
+			<option value="SIMPLES_NACIONAL">Simples Nacional</option>
+			<option value="NORMAL">Normal (Lucro Presumido/Real)</option>
+		</select>
 	</div>
 
 	<!-- Razão Social -->

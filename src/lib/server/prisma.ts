@@ -2,6 +2,9 @@ import { PrismaClient } from '@prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { Pool } from 'pg';
 
+// Ensure .env is loaded (for dev without Vite)
+import 'dotenv/config';
+
 const globalForPrisma = globalThis as unknown as {
 	prisma: PrismaClient | undefined;
 };
