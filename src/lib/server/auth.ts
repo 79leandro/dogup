@@ -144,7 +144,12 @@ export async function login(
 			}
 		};
 	} catch (error) {
-		console.error('Login error:', error);
+		console.error('Login error details:', {
+			message: error instanceof Error ? error.message : 'Unknown',
+			stack: error instanceof Error ? error.stack : undefined,
+			code: (error as any).code,
+			meta: (error as any).meta
+		});
 		return { success: false, error: 'Erro ao realizar login' };
 	}
 }
