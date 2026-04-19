@@ -84,7 +84,14 @@ export async function login(
 	rememberMe: boolean = false
 ): Promise<{ success: true; user: SessionUser; token: string } | { success: false; error: string }> {
 	try {
-		const prisma = getPrisma();
+		let prisma;
+		try {
+			prisma = getPrisma();
+		} catch (dbError) {
+			console.error('Database connection failed:', dbError);
+			return { success: false, error: 'Erro de conexão com banco de dados' };
+		}
+
 		const user = await prisma.usuario.findUnique({
 			where: { email },
 			include: { 
@@ -146,9 +153,9 @@ export async function login(
 	} catch (error) {
 		console.error('Login error details:', {
 			message: error instanceof Error ? error.message : 'Unknown',
-			stack: error instanceof Error ? error.stack : undefined,
 			code: (error as any).code,
-			meta: (error as any).meta
+			meta: (error as any).meta,
+			constructor: error.constructor.name
 		});
 		return { success: false, error: 'Erro ao realizar login' };
 	}
