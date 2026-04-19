@@ -21,8 +21,8 @@
 	<!-- Header -->
 	<div class="flex items-center justify-between mb-4">
 		<div>
-			<h2 class="font-display font-bold text-lg text-terminal-100">Situação Fiscal</h2>
-			<p class="text-sm text-terminal-500">Federal</p>
+			<h2 class="font-display font-bold text-lg text-slate-800">Situação Fiscal</h2>
+			<p class="text-sm text-slate-400">Federal</p>
 		</div>
 		<div class="w-10 h-10 rounded-xl bg-semantic-info/20 flex items-center justify-center">
 			<svg class="w-5 h-5 text-semantic-info" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -38,34 +38,34 @@
 
 	<!-- Legend -->
 	<div class="space-y-2 mt-4">
-		<div class="flex items-center justify-between p-2.5 rounded-lg bg-terminal-700/30 border border-terminal-700/50">
+		<div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-100/50 border border-slate-200/50">
 			<div class="flex items-center gap-2">
 				<div class="w-2.5 h-2.5 rounded-full bg-semantic-success"></div>
-				<span class="text-sm text-terminal-300">Regular</span>
+				<span class="text-sm text-slate-600">Regular</span>
 			</div>
 			<div class="text-right">
-				<span class="text-sm font-bold text-terminal-100">{regular.count}</span>
-				<span class="text-xs text-terminal-500 ml-1">({calcPercentage(regular.count)}%)</span>
+				<span class="text-sm font-bold text-slate-800">{regular.count}</span>
+				<span class="text-xs text-slate-400 ml-1">({calcPercentage(regular.count)}%)</span>
 			</div>
 		</div>
-		<div class="flex items-center justify-between p-2.5 rounded-lg bg-terminal-700/30 border border-terminal-700/50">
+		<div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-100/50 border border-slate-200/50">
 			<div class="flex items-center gap-2">
 				<div class="w-2.5 h-2.5 rounded-full bg-semantic-warning"></div>
-				<span class="text-sm text-terminal-300">Regularizado</span>
+				<span class="text-sm text-slate-600">Regularizado</span>
 			</div>
 			<div class="text-right">
-				<span class="text-sm font-bold text-terminal-100">{regularizado.count}</span>
-				<span class="text-xs text-terminal-500 ml-1">({calcPercentage(regularizado.count)}%)</span>
+				<span class="text-sm font-bold text-slate-800">{regularizado.count}</span>
+				<span class="text-xs text-slate-400 ml-1">({calcPercentage(regularizado.count)}%)</span>
 			</div>
 		</div>
-		<div class="flex items-center justify-between p-2.5 rounded-lg bg-terminal-700/30 border border-terminal-700/50">
+		<div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-100/50 border border-slate-200/50">
 			<div class="flex items-center gap-2">
 				<div class="w-2.5 h-2.5 rounded-full bg-semantic-critical"></div>
-				<span class="text-sm text-terminal-300">Irregular</span>
+				<span class="text-sm text-slate-600">Irregular</span>
 			</div>
 			<div class="text-right">
-				<span class="text-sm font-bold text-terminal-100">{irregular.count}</span>
-				<span class="text-xs text-terminal-500 ml-1">({calcPercentage(irregular.count)}%)</span>
+				<span class="text-sm font-bold text-slate-800">{irregular.count}</span>
+				<span class="text-xs text-slate-400 ml-1">({calcPercentage(irregular.count)}%)</span>
 			</div>
 		</div>
 	</div>

@@ -10,9 +10,9 @@
 </script>
 
 {#if variant === 'circular'}
-	<div class="rounded-full animate-pulse bg-terminal-700 {className}" style="width: {width}; height: {width};"></div>
+	<div class="rounded-full animate-pulse bg-slate-100 {className}" style="width: {width}; height: {width};"></div>
 {:else if variant === 'rectangular'}
-	<div class="rounded-lg animate-pulse bg-terminal-700 {className}" style="width: {width}; height: {height};"></div>
+	<div class="rounded-lg animate-pulse bg-slate-100 {className}" style="width: {width}; height: {height};"></div>
 {:else}
-	<div class="animate-pulse bg-terminal-700 rounded {width} {height} {className}"></div>
+	<div class="animate-pulse bg-slate-100 rounded {width} {height} {className}"></div>
 {/if}

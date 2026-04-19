@@ -178,25 +178,25 @@
 	<!-- Header -->
 	<div class="flex items-center justify-between">
 		<div>
-			<h1 class="font-display text-2xl font-bold text-terminal-100">Calendário de Prazos</h1>
-			<p class="text-terminal-500">Obrigações acessórias e deadlines fiscais</p>
+			<h1 class="font-display text-2xl font-bold text-slate-800">Calendário de Prazos</h1>
+			<p class="text-slate-400">Obrigações acessórias e deadlines fiscais</p>
 		</div>
 
 		<div class="flex items-center gap-2">
 			<button onclick={goToToday} class="btn btn-ghost text-sm">
 				Hoje
 			</button>
-			<div class="flex items-center border border-terminal-700 rounded-lg overflow-hidden">
-				<button onclick={prevMonth} class="p-2 hover:bg-terminal-700 transition-colors" aria-label="Mês anterior">
-					<svg class="w-5 h-5 text-terminal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+			<div class="flex items-center border border-slate-200 rounded-lg overflow-hidden">
+				<button onclick={prevMonth} class="p-2 hover:bg-slate-100 transition-colors" aria-label="Mês anterior">
+					<svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
 					</svg>
 				</button>
-				<span class="px-4 text-terminal-100 font-medium min-w-[140px] text-center">
+				<span class="px-4 text-slate-800 font-medium min-w-[140px] text-center">
 					{monthNames[currentMonth]} {currentYear}
 				</span>
-				<button onclick={nextMonth} class="p-2 hover:bg-terminal-700 transition-colors" aria-label="Próximo mês">
-					<svg class="w-5 h-5 text-terminal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<button onclick={nextMonth} class="p-2 hover:bg-slate-100 transition-colors" aria-label="Próximo mês">
+					<svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
 					</svg>
 				</button>
@@ -208,24 +208,24 @@
 	<div class="flex items-center gap-6 text-sm">
 		<div class="flex items-center gap-2">
 			<div class="w-3 h-3 rounded bg-semantic-critical"></div>
-			<span class="text-terminal-400">Prazo de Entrega</span>
+			<span class="text-slate-500">Prazo de Entrega</span>
 		</div>
 		<div class="flex items-center gap-2">
 			<div class="w-3 h-3 rounded bg-semantic-success"></div>
-			<span class="text-terminal-400">Entregue</span>
+			<span class="text-slate-500">Entregue</span>
 		</div>
 		<div class="flex items-center gap-2">
 			<div class="w-3 h-3 rounded bg-semantic-warning"></div>
-			<span class="text-terminal-400">Pendente</span>
+			<span class="text-slate-500">Pendente</span>
 		</div>
 	</div>
 
 	<!-- Calendar Grid -->
 	<div class="card overflow-hidden">
 		<!-- Week days header -->
-		<div class="grid grid-cols-7 bg-terminal-800/50">
+		<div class="grid grid-cols-7 bg-white/50">
 			{#each weekDays as day}
-				<div class="px-4 py-3 text-center text-xs font-semibold text-terminal-400 uppercase tracking-wider">
+				<div class="px-4 py-3 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider">
 					{day}
 				</div>
 			{/each}
@@ -235,15 +235,15 @@
 		<div class="grid grid-cols-7">
 			{#each calendarDays as day}
 				<div
-					class="min-h-[100px] p-2 border-t border-r border-terminal-700/50
-						{!day.isCurrentMonth ? 'bg-terminal-800/30' : ''}
+					class="min-h-[100px] p-2 border-t border-r border-slate-200/50
+						{!day.isCurrentMonth ? 'bg-white/30' : ''}
 						{day.isToday ? 'bg-semantic-accent/5' : ''}"
 				>
 					<div class="flex items-center justify-between mb-1">
 						<span
 							class="text-sm font-medium
-								{day.isToday ? 'w-7 h-7 rounded-full bg-semantic-accent text-white flex items-center justify-center' : 'text-terminal-300'}
-								{!day.isCurrentMonth ? 'text-terminal-600' : ''}"
+								{day.isToday ? 'w-7 h-7 rounded-full bg-semantic-accent text-white flex items-center justify-center' : 'text-slate-600'}
+								{!day.isCurrentMonth ? 'text-slate-300' : ''}"
 						>
 							{day.date.getDate()}
 						</span>
@@ -274,15 +274,15 @@
 
 	<!-- Upcoming Deadlines -->
 	<div class="card p-6">
-		<h2 class="font-semibold text-terminal-100 mb-4">Próximos Prazos em {monthNames[currentMonth]}</h2>
+		<h2 class="font-semibold text-slate-800 mb-4">Próximos Prazos em {monthNames[currentMonth]}</h2>
 
 		{#if getObrigacoesDoMes().filter(o => o.status !== 'ENTREGUE').length === 0}
-			<p class="text-terminal-500 text-sm">Nenhuma obrigação pendente para este mês.</p>
+			<p class="text-slate-400 text-sm">Nenhuma obrigação pendente para este mês.</p>
 		{:else}
 			<div class="space-y-3">
 				{#each getObrigacoesDoMes().filter(o => o.status !== 'ENTREGUE') as obr (obr.id)}
 					{@const badge = getStatusBadge(obr.status)}
-					<div class="flex items-center justify-between py-2 border-b border-terminal-700/50 last:border-0">
+					<div class="flex items-center justify-between py-2 border-b border-slate-200/50 last:border-0">
 						<div class="flex items-center gap-3">
 							<div class="w-10 h-10 rounded-lg bg-semantic-warning/10 flex items-center justify-center">
 								<span class="text-sm font-bold text-semantic-warning">
@@ -290,8 +290,8 @@
 								</span>
 							</div>
 							<div>
-								<p class="text-terminal-100 font-medium text-sm">{obr.cliente.nomeRazao}</p>
-								<p class="text-terminal-500 text-xs">{obr.tipo}</p>
+								<p class="text-slate-800 font-medium text-sm">{obr.cliente.nomeRazao}</p>
+								<p class="text-slate-400 text-xs">{obr.tipo}</p>
 							</div>
 						</div>
 						<span class="badge {badge.class}">{badge.label}</span>

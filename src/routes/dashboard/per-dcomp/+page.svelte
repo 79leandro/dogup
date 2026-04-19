@@ -15,8 +15,8 @@
 	<!-- Header -->
 	<div class="flex items-center justify-between">
 		<div>
-			<h1 class="font-display text-2xl font-bold text-terminal-100">PER/DCOMP</h1>
-			<p class="text-terminal-500">Pedidos de Restituição e Compensação</p>
+			<h1 class="font-display text-2xl font-bold text-slate-800">PER/DCOMP</h1>
+			<p class="text-slate-400">Pedidos de Restituição e Compensação</p>
 		</div>
 		<button class="btn btn-primary flex items-center gap-2">
 			<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -29,20 +29,20 @@
 	<!-- Stats -->
 	<div class="grid grid-cols-4 gap-4">
 		<div class="card p-5">
-			<div class="text-3xl font-bold text-terminal-100">24</div>
-			<div class="text-sm text-terminal-500">Total de Pedidos</div>
+			<div class="text-3xl font-bold text-slate-800">24</div>
+			<div class="text-sm text-slate-400">Total de Pedidos</div>
 		</div>
 		<div class="card p-5 border-l-4 border-l-semantic-success">
 			<div class="text-3xl font-bold text-semantic-success">18</div>
-			<div class="text-sm text-terminal-500">Deferidos</div>
+			<div class="text-sm text-slate-400">Deferidos</div>
 		</div>
 		<div class="card p-5 border-l-4 border-l-semantic-warning">
 			<div class="text-3xl font-bold text-semantic-warning">4</div>
-			<div class="text-sm text-terminal-500">Em Análise</div>
+			<div class="text-sm text-slate-400">Em Análise</div>
 		</div>
 		<div class="card p-5 border-l-4 border-l-semantic-critical">
 			<div class="text-3xl font-bold text-semantic-critical">2</div>
-			<div class="text-sm text-terminal-500">Indeferidos</div>
+			<div class="text-sm text-slate-400">Indeferidos</div>
 		</div>
 	</div>
 
@@ -50,21 +50,21 @@
 	<div class="card">
 		<div class="overflow-x-auto">
 			<table class="w-full">
-				<thead class="bg-terminal-700/50">
+				<thead class="bg-slate-100/50">
 					<tr>
-						<th class="text-left px-4 py-3 text-xs font-medium text-terminal-400 uppercase">Número</th>
-						<th class="text-left px-4 py-3 text-xs font-medium text-terminal-400 uppercase">Cliente</th>
-						<th class="text-center px-4 py-3 text-xs font-medium text-terminal-400 uppercase">Tipo</th>
-						<th class="text-center px-4 py-3 text-xs font-medium text-terminal-400 uppercase">Status</th>
-						<th class="text-right px-4 py-3 text-xs font-medium text-terminal-400 uppercase">Valor</th>
-						<th class="text-left px-4 py-3 text-xs font-medium text-terminal-400 uppercase">Data</th>
+						<th class="text-left px-4 py-3 text-xs font-medium text-slate-500 uppercase">Número</th>
+						<th class="text-left px-4 py-3 text-xs font-medium text-slate-500 uppercase">Cliente</th>
+						<th class="text-center px-4 py-3 text-xs font-medium text-slate-500 uppercase">Tipo</th>
+						<th class="text-center px-4 py-3 text-xs font-medium text-slate-500 uppercase">Status</th>
+						<th class="text-right px-4 py-3 text-xs font-medium text-slate-500 uppercase">Valor</th>
+						<th class="text-left px-4 py-3 text-xs font-medium text-slate-500 uppercase">Data</th>
 					</tr>
 				</thead>
-				<tbody class="divide-y divide-terminal-700">
+				<tbody class="divide-y divide-slate-200">
 					{#each pedidos as pedido}
-						<tr class="hover:bg-terminal-700/30">
-							<td class="px-4 py-4 text-sm font-mono text-terminal-200">{pedido.id}</td>
-							<td class="px-4 py-4 text-sm text-terminal-100">{pedido.cliente}</td>
+						<tr class="hover:bg-slate-100/50">
+							<td class="px-4 py-4 text-sm font-mono text-slate-700">{pedido.id}</td>
+							<td class="px-4 py-4 text-sm text-slate-800">{pedido.cliente}</td>
 							<td class="px-4 py-4 text-center">
 								<span class="px-2 py-1 rounded bg-semantic-info/20 text-semantic-info text-sm font-medium">{pedido.tipo}</span>
 							</td>
@@ -77,8 +77,8 @@
 									<span class="status-badge status-warning">Em Análise</span>
 								{/if}
 							</td>
-							<td class="px-4 py-4 text-sm text-right text-terminal-100">{formatCurrency(pedido.valor)}</td>
-							<td class="px-4 py-4 text-sm text-terminal-300">{pedido.data}</td>
+							<td class="px-4 py-4 text-sm text-right text-slate-800">{formatCurrency(pedido.valor)}</td>
+							<td class="px-4 py-4 text-sm text-slate-600">{pedido.data}</td>
 						</tr>
 					{/each}
 				</tbody>

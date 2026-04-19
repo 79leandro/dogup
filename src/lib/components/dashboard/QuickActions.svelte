@@ -43,8 +43,8 @@
 	};
 </script>
 
-<div class="card border-terminal-700 p-5">
-	<h3 class="text-sm font-semibold text-terminal-300 mb-4 flex items-center gap-2">
+<div class="card border-slate-200 p-5">
+	<h3 class="text-sm font-semibold text-slate-600 mb-4 flex items-center gap-2">
 		<svg class="w-4 h-4 text-semantic-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 			<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
 		</svg>

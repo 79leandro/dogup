@@ -90,7 +90,7 @@
 			NAO_ENTREGUE: { class: 'status-critical', label: 'Não Entregue' },
 			INCONSISTENCIA: { class: 'status-warning', label: 'Inconsistência' },
 			EM_PROCESSAMENTO: { class: 'status-warning', label: 'Em Processamento' },
-			OUTROS: { class: 'bg-terminal-700 text-terminal-300', label: 'Outros' }
+			OUTROS: { class: 'bg-slate-100 text-slate-600', label: 'Outros' }
 		};
 		return badges[status] || badges.OUTROS;
 	}
@@ -131,8 +131,8 @@
 	<!-- Header -->
 	<div class="flex items-center justify-between">
 		<div>
-			<h1 class="font-display text-2xl font-bold text-terminal-100">Obrigações Acessórias</h1>
-			<p class="text-terminal-500">Monitoramento de transmissões DCTFWeb</p>
+			<h1 class="font-display text-2xl font-bold text-slate-800">Obrigações Acessórias</h1>
+			<p class="text-slate-400">Monitoramento de transmissões DCTFWeb</p>
 		</div>
 	</div>
 
@@ -175,8 +175,8 @@
 				</select>
 			</div>
 			<div class="flex-1"></div>
-			<div class="flex items-center gap-2 px-4 py-2 rounded-lg bg-terminal-700/50">
-				<span class="text-sm text-terminal-400">Taxa de entrega:</span>
+			<div class="flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-100/50">
+				<span class="text-sm text-slate-500">Taxa de entrega:</span>
 				<span class="text-xl font-bold text-semantic-success">{stats.percentualEntrega}%</span>
 			</div>
 		</div>

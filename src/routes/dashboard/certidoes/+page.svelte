@@ -24,8 +24,8 @@
 <div class="space-y-6 animate-fade-in">
 	<!-- Header -->
 	<div>
-		<h1 class="font-display text-2xl font-bold text-terminal-100">Certidões Negativas de Débitos</h1>
-		<p class="text-terminal-500">CND Federal e Estadual</p>
+		<h1 class="font-display text-2xl font-bold text-slate-800">Certidões Negativas de Débitos</h1>
+		<p class="text-slate-400">CND Federal e Estadual</p>
 	</div>
 
 	<!-- Stats -->
@@ -39,7 +39,7 @@
 				</div>
 				<div>
 					<div class="text-2xl font-bold text-semantic-success">195</div>
-					<div class="text-sm text-terminal-500">Regulares</div>
+					<div class="text-sm text-slate-400">Regulares</div>
 				</div>
 			</div>
 		</div>
@@ -52,7 +52,7 @@
 				</div>
 				<div>
 					<div class="text-2xl font-bold text-semantic-warning">18</div>
-					<div class="text-sm text-terminal-500">Próximo Vencimento</div>
+					<div class="text-sm text-slate-400">Próximo Vencimento</div>
 				</div>
 			</div>
 		</div>
@@ -65,7 +65,7 @@
 				</div>
 				<div>
 					<div class="text-2xl font-bold text-semantic-critical">8</div>
-					<div class="text-sm text-terminal-500">Irregulares/Vencidas</div>
+					<div class="text-sm text-slate-400">Irregulares/Vencidas</div>
 				</div>
 			</div>
 		</div>
@@ -75,25 +75,25 @@
 	<div class="card">
 		<div class="overflow-x-auto">
 			<table class="w-full">
-				<thead class="bg-terminal-700/50">
+				<thead class="bg-slate-100/50">
 					<tr>
-						<th class="text-left px-4 py-3 text-xs font-medium text-terminal-400 uppercase">CNPJ</th>
-						<th class="text-left px-4 py-3 text-xs font-medium text-terminal-400 uppercase">Cliente</th>
-						<th class="text-left px-4 py-3 text-xs font-medium text-terminal-400 uppercase">Tipo</th>
-						<th class="text-center px-4 py-3 text-xs font-medium text-terminal-400 uppercase">Status</th>
-						<th class="text-left px-4 py-3 text-xs font-medium text-terminal-400 uppercase">Validade</th>
+						<th class="text-left px-4 py-3 text-xs font-medium text-slate-500 uppercase">CNPJ</th>
+						<th class="text-left px-4 py-3 text-xs font-medium text-slate-500 uppercase">Cliente</th>
+						<th class="text-left px-4 py-3 text-xs font-medium text-slate-500 uppercase">Tipo</th>
+						<th class="text-center px-4 py-3 text-xs font-medium text-slate-500 uppercase">Status</th>
+						<th class="text-left px-4 py-3 text-xs font-medium text-slate-500 uppercase">Validade</th>
 					</tr>
 				</thead>
-				<tbody class="divide-y divide-terminal-700">
+				<tbody class="divide-y divide-slate-200">
 					{#each certidoes as cnd}
-						<tr class="hover:bg-terminal-700/30">
-							<td class="px-4 py-4 text-sm font-mono text-terminal-200">{cnd.cnpj}</td>
-							<td class="px-4 py-4 text-sm text-terminal-100">{cnd.cliente}</td>
-							<td class="px-4 py-4 text-sm text-terminal-300">{getTipoLabel(cnd.tipo)}</td>
+						<tr class="hover:bg-slate-100/50">
+							<td class="px-4 py-4 text-sm font-mono text-slate-700">{cnd.cnpj}</td>
+							<td class="px-4 py-4 text-sm text-slate-800">{cnd.cliente}</td>
+							<td class="px-4 py-4 text-sm text-slate-600">{getTipoLabel(cnd.tipo)}</td>
 							<td class="px-4 py-4 text-center">
 								<span class="status-badge {getStatusBadge(cnd.situacao)}">{cnd.situacao}</span>
 							</td>
-							<td class="px-4 py-4 text-sm text-terminal-300">{cnd.validade}</td>
+							<td class="px-4 py-4 text-sm text-slate-600">{cnd.validade}</td>
 						</tr>
 					{/each}
 				</tbody>

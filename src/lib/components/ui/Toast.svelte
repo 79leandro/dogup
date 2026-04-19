@@ -62,14 +62,14 @@
 				{@html typeIcons[toast.type]}
 			</div>
 			<div class="flex-1 min-w-0">
-				<p class="text-sm font-medium text-terminal-100">{toast.title}</p>
+				<p class="text-sm font-medium text-slate-800">{toast.title}</p>
 				{#if toast.message}
-					<p class="text-xs text-terminal-400 mt-1">{toast.message}</p>
+					<p class="text-xs text-slate-500 mt-1">{toast.message}</p>
 				{/if}
 			</div>
 			<button
 				onclick={() => removeToast(toast.id)}
-				class="flex-shrink-0 p-1 rounded hover:bg-terminal-700 text-terminal-400 hover:text-terminal-100 transition-colors"
+				class="flex-shrink-0 p-1 rounded hover:bg-slate-100 text-slate-500 hover:text-slate-800 transition-colors"
 				aria-label="Dismiss"
 			>
 				<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

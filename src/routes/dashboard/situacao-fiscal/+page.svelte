@@ -48,26 +48,26 @@
 <div class="space-y-6 animate-fade-in">
 	<!-- Header -->
 	<div>
-		<h1 class="font-display text-2xl font-bold text-terminal-100">Situação Fiscal Federal</h1>
-		<p class="text-terminal-500">Status de regularidade dos clientes</p>
+		<h1 class="font-display text-2xl font-bold text-slate-800">Situação Fiscal Federal</h1>
+		<p class="text-slate-400">Status de regularidade dos clientes</p>
 	</div>
 
 	<!-- Stats -->
 	<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
 		<div class="card p-5 border-l-4 border-l-semantic-success">
 			<div class="text-3xl font-bold text-semantic-success">{stats.regular}</div>
-			<div class="text-sm text-terminal-400 mt-1">Clientes Regulares</div>
-			<div class="text-xs text-terminal-500 mt-1">{stats.percentages.regular}% do total</div>
+			<div class="text-sm text-slate-500 mt-1">Clientes Regulares</div>
+			<div class="text-xs text-slate-400 mt-1">{stats.percentages.regular}% do total</div>
 		</div>
 		<div class="card p-5 border-l-4 border-l-semantic-warning">
 			<div class="text-3xl font-bold text-semantic-warning">{stats.regularizado}</div>
-			<div class="text-sm text-terminal-400 mt-1">Em Regularização</div>
-			<div class="text-xs text-terminal-500 mt-1">{stats.percentages.regularizado}% do total</div>
+			<div class="text-sm text-slate-500 mt-1">Em Regularização</div>
+			<div class="text-xs text-slate-400 mt-1">{stats.percentages.regularizado}% do total</div>
 		</div>
 		<div class="card p-5 border-l-4 border-l-semantic-critical">
 			<div class="text-3xl font-bold text-semantic-critical">{stats.irregular}</div>
-			<div class="text-sm text-terminal-400 mt-1">Irregulares</div>
-			<div class="text-xs text-terminal-500 mt-1">{stats.percentages.irregular}% do total</div>
+			<div class="text-sm text-slate-500 mt-1">Irregulares</div>
+			<div class="text-xs text-slate-400 mt-1">{stats.percentages.irregular}% do total</div>
 		</div>
 	</div>
 
@@ -75,7 +75,7 @@
 	<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 		<!-- Doughnut Chart -->
 		<div class="card p-5">
-			<h3 class="font-semibold text-terminal-100 mb-4">Distribuição</h3>
+			<h3 class="font-semibold text-slate-800 mb-4">Distribuição</h3>
 			<div class="h-56">
 				<ChartDoughnut
 					data={[stats.regular, stats.regularizado, stats.irregular]}
@@ -86,15 +86,15 @@
 			<div class="mt-4 space-y-2">
 				<div class="flex items-center gap-2">
 					<div class="w-3 h-3 rounded-full bg-semantic-success"></div>
-					<span class="text-sm text-terminal-400">Regular</span>
+					<span class="text-sm text-slate-500">Regular</span>
 				</div>
 				<div class="flex items-center gap-2">
 					<div class="w-3 h-3 rounded-full bg-semantic-warning"></div>
-					<span class="text-sm text-terminal-400">Regularizado</span>
+					<span class="text-sm text-slate-500">Regularizado</span>
 				</div>
 				<div class="flex items-center gap-2">
 					<div class="w-3 h-3 rounded-full bg-semantic-critical"></div>
-					<span class="text-sm text-terminal-400">Irregular</span>
+					<span class="text-sm text-slate-500">Irregular</span>
 				</div>
 			</div>
 		</div>

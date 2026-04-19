@@ -292,8 +292,8 @@
 	</div>
 
 	<!-- Endereço -->
-	<fieldset class="border border-terminal-700 rounded-lg p-4">
-		<legend class="text-sm font-medium text-terminal-300 px-2">Endereço</legend>
+	<fieldset class="border border-slate-200 rounded-lg p-4">
+		<legend class="text-sm font-medium text-slate-600 px-2">Endereço</legend>
 
 		<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
 			<div class="md:col-span-2">
@@ -368,8 +368,8 @@
 	</fieldset>
 
 	<!-- Contato -->
-	<fieldset class="border border-terminal-700 rounded-lg p-4">
-		<legend class="text-sm font-medium text-terminal-300 px-2">Contato</legend>
+	<fieldset class="border border-slate-200 rounded-lg p-4">
+		<legend class="text-sm font-medium text-slate-600 px-2">Contato</legend>
 
 		<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
 			<div>
@@ -409,7 +409,7 @@
 	</div>
 
 	<!-- Actions -->
-	<div class="flex items-center justify-end gap-3 pt-4 border-t border-terminal-700">
+	<div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-200">
 		{#if onCancel}
 			<button type="button" onclick={onCancel} class="btn btn-ghost">
 				Cancelar

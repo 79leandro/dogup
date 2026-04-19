@@ -136,7 +136,7 @@
 
 <!-- Sidebar -->
 <aside
-	class="fixed left-0 top-0 h-screen bg-terminal-800/95 backdrop-blur-xl border-r border-terminal-700 flex flex-col z-50 transition-all duration-300 ease-out
+	class="fixed left-0 top-0 h-screen bg-white/95 backdrop-blur-xl border-r border-slate-200 flex flex-col z-50 transition-all duration-300 ease-out
 		{isExpanded ? 'w-64' : ''}
 		{isCollapsed ? 'w-[72px]' : ''}
 		{isMobile ? 'w-64 translate-x-0' : ''}
@@ -144,7 +144,7 @@
 	aria-label="Navegação principal"
 >
 	<!-- Logo -->
-	<div class="p-4 border-b border-terminal-700">
+	<div class="p-4 border-b border-slate-200">
 		{#if isExpanded}
 			<div class="flex items-center justify-between">
 				<div class="flex items-center gap-3">
@@ -152,13 +152,13 @@
 						<span class="text-white font-bold text-lg">D</span>
 					</div>
 					<div>
-						<h1 class="font-display font-bold text-lg text-terminal-100">DOGUP</h1>
-						<p class="text-xs text-terminal-500">Contábil</p>
+						<h1 class="font-display font-bold text-lg text-slate-800">DOGUP</h1>
+						<p class="text-xs text-slate-400">Contábil</p>
 					</div>
 				</div>
 				<button
 					onclick={toggleSidebar}
-					class="p-2 rounded-lg hover:bg-terminal-700 text-terminal-400 hover:text-terminal-100 transition-colors"
+					class="p-2 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-slate-800 transition-colors"
 					aria-label="Recolher menu"
 				>
 					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -173,7 +173,7 @@
 				</div>
 				<button
 					onclick={() => sidebarState.set(isMobile ? 'expanded' : 'collapsed')}
-					class="p-2 rounded-lg hover:bg-terminal-700 text-terminal-400 hover:text-terminal-100 transition-colors"
+					class="p-2 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-slate-800 transition-colors"
 					aria-label="Expandir menu"
 				>
 					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -208,7 +208,7 @@
 		<div>
 			<button
 				onclick={() => toggleSection('obrigacoes')}
-				class="flex items-center w-full px-3 py-2 text-sm font-medium text-terminal-400 hover:text-terminal-200 transition-colors
+				class="flex items-center w-full px-3 py-2 text-sm font-medium text-slate-500 hover:text-slate-700 transition-colors
 					{isCollapsed ? 'justify-center' : 'justify-between'}"
 				title={isCollapsed ? 'Obrigações' : undefined}
 				aria-label="Toggle Obrigações section"
@@ -254,7 +254,7 @@
 		<div>
 			<button
 				onclick={() => toggleSection('fiscal')}
-				class="flex items-center w-full px-3 py-2 text-sm font-medium text-terminal-400 hover:text-terminal-200 transition-colors
+				class="flex items-center w-full px-3 py-2 text-sm font-medium text-slate-500 hover:text-slate-700 transition-colors
 					{isCollapsed ? 'justify-center' : 'justify-between'}"
 				title={isCollapsed ? 'Fiscal' : undefined}
 				aria-label="Toggle Fiscal section"
@@ -300,7 +300,7 @@
 		<div>
 			<button
 				onclick={() => toggleSection('ferramentas')}
-				class="flex items-center w-full px-3 py-2 text-sm font-medium text-terminal-400 hover:text-terminal-200 transition-colors
+				class="flex items-center w-full px-3 py-2 text-sm font-medium text-slate-500 hover:text-slate-700 transition-colors
 					{isCollapsed ? 'justify-center' : 'justify-between'}"
 				title={isCollapsed ? 'Ferramentas' : undefined}
 				aria-label="Toggle Ferramentas section"
@@ -344,20 +344,20 @@
 	</nav>
 
 	<!-- Footer -->
-	<div class="p-3 border-t border-terminal-700">
-		<div class="flex items-center gap-3 px-3 py-3 rounded-lg bg-terminal-700/50
+	<div class="p-3 border-t border-slate-200">
+		<div class="flex items-center gap-3 px-3 py-3 rounded-lg bg-slate-100/50
 			{isCollapsed ? 'justify-center' : ''}">
 			<div class="w-8 h-8 rounded-full bg-gradient-to-br from-semantic-success to-semantic-info flex items-center justify-center flex-shrink-0">
 				<span class="text-white text-sm font-medium">{data.user?.nome?.charAt(0) ?? 'U'}</span>
 			</div>
 			{#if !isCollapsed}
 				<div class="flex-1 min-w-0">
-					<p class="text-sm font-medium text-terminal-100 truncate">{data.user?.nome ?? 'Usuário'}</p>
-					<p class="text-xs text-terminal-500 truncate">{data.user?.empresaNome ?? 'Empresa'}</p>
+					<p class="text-sm font-medium text-slate-800 truncate">{data.user?.nome ?? 'Usuário'}</p>
+					<p class="text-xs text-slate-400 truncate">{data.user?.empresaNome ?? 'Empresa'}</p>
 				</div>
 				<a
 					href="/logout"
-					class="p-1.5 rounded-lg hover:bg-terminal-600 text-terminal-400 hover:text-terminal-200 transition-colors"
+					class="p-1.5 rounded-lg hover:bg-slate-200 text-slate-500 hover:text-slate-700 transition-colors"
 					aria-label="Sair"
 				>
 					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

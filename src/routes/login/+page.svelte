@@ -10,27 +10,27 @@
 	<title>Login - DOGUP Contábil</title>
 </svelte:head>
 
-<div class="min-h-screen flex flex-col items-center justify-center p-8 bg-terminal-900">
+<div class="min-h-screen flex flex-col items-center justify-center p-8 bg-slate-50">
 	<!-- Logo -->
 	<div class="flex items-center gap-3 mb-12">
 		<div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-semantic-accent to-semantic-info flex items-center justify-center">
 			<span class="text-white font-bold text-xl">D</span>
 		</div>
 		<div>
-			<h1 class="font-display font-bold text-2xl text-terminal-100">DOGUP</h1>
-			<p class="text-sm text-terminal-500">Contábil</p>
+			<h1 class="font-display font-bold text-2xl text-slate-800">DOGUP</h1>
+			<p class="text-sm text-slate-400">Contábil</p>
 		</div>
 	</div>
 
 	<!-- Hero content centered above login -->
 	<div class="text-center mb-10 max-w-lg">
-		<h2 class="font-display text-4xl font-bold text-terminal-100 leading-tight mb-4">
+		<h2 class="font-display text-4xl font-bold text-slate-800 leading-tight mb-4">
 			Monitoramento de<br/>
 			<span class="text-transparent bg-clip-text bg-gradient-to-r from-semantic-success to-semantic-info">
 				Conformidade Fiscal
 			</span>
 		</h2>
-		<p class="text-lg text-terminal-400 mb-8">
+		<p class="text-lg text-slate-500 mb-8">
 			Plataforma centralizada de inteligência e monitoramento para escritórios de contabilidade e departamentos fiscais.
 		</p>
 
@@ -41,7 +41,7 @@
 				{ icon: '⚡', text: 'Alertas automáticos de pendências e prazos' },
 				{ icon: '🔒', text: 'Integração segura com e-CAC e PGFN' }
 			] as feature}
-				<div class="flex items-center gap-3 text-terminal-300">
+				<div class="flex items-center gap-3 text-slate-600">
 					<span class="text-xl">{feature.icon}</span>
 					<span class="text-sm">{feature.text}</span>
 				</div>
@@ -52,8 +52,8 @@
 	<!-- Login Form centered -->
 	<div class="w-full max-w-md">
 		<div class="text-center mb-8">
-			<h2 class="font-display text-2xl font-bold text-terminal-100">Bem-vindo de volta</h2>
-			<p class="text-terminal-500 mt-2">Entre com suas credenciais para acessar</p>
+			<h2 class="font-display text-2xl font-bold text-slate-800">Bem-vindo de volta</h2>
+			<p class="text-slate-400 mt-2">Entre com suas credenciais para acessar</p>
 		</div>
 
 		{#if form?.error}
@@ -100,8 +100,8 @@
 
 			<div class="flex items-center justify-between text-sm">
 				<label class="flex items-center gap-2 cursor-pointer">
-					<input type="checkbox" name="rememberMe" class="w-4 h-4 rounded border-terminal-600 bg-terminal-700 text-semantic-accent focus:ring-semantic-accent/50" />
-					<span class="text-terminal-400">Lembrar-me</span>
+					<input type="checkbox" name="rememberMe" class="w-4 h-4 rounded border-slate-300 bg-slate-100 text-semantic-accent focus:ring-semantic-accent/50" />
+					<span class="text-slate-500">Lembrar-me</span>
 				</label>
 				<a href="/recuperar-senha" class="text-semantic-accent hover:text-semantic-accent/80 transition-colors">
 					Esqueceu a senha?
@@ -128,14 +128,14 @@
 		</form>
 
 		<!-- Demo credentials hint -->
-		<div class="mt-8 p-4 rounded-xl bg-terminal-800/50 border border-terminal-700 text-center">
-			<p class="text-xs text-terminal-500 mb-2">Credenciais de demonstração:</p>
-			<p class="text-sm text-terminal-300">admin@dogup.com.br / admin123</p>
+		<div class="mt-8 p-4 rounded-xl bg-white/50 border border-slate-200 text-center">
+			<p class="text-xs text-slate-400 mb-2">Credenciais de demonstração:</p>
+			<p class="text-sm text-slate-600">admin@dogup.com.br / admin123</p>
 		</div>
 	</div>
 
 	<!-- Footer -->
-	<div class="mt-12 text-sm text-terminal-500">
+	<div class="mt-12 text-sm text-slate-400">
 		© 2024 DOGUP Contábil
 	</div>
 </div>

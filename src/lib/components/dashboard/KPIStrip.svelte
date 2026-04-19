@@ -79,8 +79,8 @@
 		>
 			<div class="flex items-start justify-between">
 				<div class="flex-1">
-					<p class="text-sm text-terminal-400 font-medium">{kpi.label}</p>
-					<p class="text-2xl lg:text-3xl font-bold font-display text-terminal-50 mt-1">
+					<p class="text-sm text-slate-500 font-medium">{kpi.label}</p>
+					<p class="text-2xl lg:text-3xl font-bold font-display text-slate-900 mt-1">
 						{kpi.value}
 					</p>
 					<p class="text-xs {trendColorClasses[kpi.color as ColorKey]} mt-2 flex items-center gap-1">

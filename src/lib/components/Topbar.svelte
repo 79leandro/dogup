@@ -37,14 +37,14 @@
 	);
 </script>
 
-<header class="fixed top-0 {leftOffset} right-0 h-16 bg-terminal-800/80 backdrop-blur-xl border-b border-terminal-700 z-40 transition-all duration-300">
+<header class="fixed top-0 {leftOffset} right-0 h-16 bg-white/80 backdrop-blur-xl border-b border-slate-200 z-40 transition-all duration-300">
 	<div class="flex items-center justify-between h-full px-4 lg:px-6">
 		<!-- Left: Menu button + Breadcrumb -->
 		<div class="flex items-center gap-3 lg:gap-4">
 			<!-- Mobile menu toggle -->
 			<button
 				onclick={toggleMobileSidebar}
-				class="lg:hidden p-2 rounded-lg hover:bg-terminal-700 text-terminal-400 hover:text-terminal-100 transition-colors"
+				class="lg:hidden p-2 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-slate-800 transition-colors"
 				aria-label={isMobile ? 'Fechar menu' : 'Abrir menu'}
 			>
 				{#if isMobile}
@@ -61,7 +61,7 @@
 			<!-- Desktop collapse toggle -->
 			<button
 				onclick={() => sidebarState.update(s => s === 'collapsed' ? 'expanded' : 'collapsed')}
-				class="hidden lg:block p-2 rounded-lg hover:bg-terminal-700 text-terminal-400 hover:text-terminal-100 transition-colors"
+				class="hidden lg:block p-2 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-slate-800 transition-colors"
 				aria-label={isCollapsed ? 'Expandir menu' : 'Recolher menu'}
 			>
 				{#if isCollapsed}
@@ -79,11 +79,11 @@
 			<nav class="flex items-center gap-2 text-sm" aria-label="Breadcrumb">
 				{#each breadcrumbs as crumb, i}
 					{#if i > 0}
-						<svg class="w-4 h-4 text-terminal-600 hidden sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<svg class="w-4 h-4 text-slate-300 hidden sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
 						</svg>
 					{/if}
-					<span class="{i === breadcrumbs.length - 1 ? 'text-terminal-100 font-medium' : 'text-terminal-500'}">
+					<span class="{i === breadcrumbs.length - 1 ? 'text-slate-800 font-medium' : 'text-slate-400'}">
 						{crumb}
 					</span>
 				{/each}
@@ -97,17 +97,17 @@
 				<input
 					type="text"
 					placeholder="Buscar CNPJ, cliente..."
-					class="w-48 lg:w-64 bg-terminal-700/50 border border-terminal-600 rounded-lg pl-10 pr-4 py-2 text-sm text-terminal-100 placeholder-terminal-500 focus:outline-none focus:ring-2 focus:ring-semantic-accent/50 focus:border-semantic-accent transition-all"
+					class="w-48 lg:w-64 bg-slate-100/50 border border-slate-300 rounded-lg pl-10 pr-4 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-semantic-accent/50 focus:border-semantic-accent transition-all"
 					aria-label="Buscar"
 				/>
-				<svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-terminal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
 				</svg>
 			</div>
 
 			<!-- Notifications -->
 			<button
-				class="relative p-2 rounded-lg hover:bg-terminal-700 text-terminal-400 hover:text-terminal-100 transition-colors"
+				class="relative p-2 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-slate-800 transition-colors"
 				aria-label="Notificações"
 			>
 				<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -121,8 +121,8 @@
 			</button>
 
 			<!-- Date -->
-			<div class="hidden sm:flex items-center text-sm text-terminal-400 border-l border-terminal-700 pl-3 lg:pl-4">
-				<span class="text-terminal-200 font-medium">
+			<div class="hidden sm:flex items-center text-sm text-slate-500 border-l border-slate-200 pl-3 lg:pl-4">
+				<span class="text-slate-700 font-medium">
 					{new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })}
 				</span>
 				<span class="mx-1.5">·</span>

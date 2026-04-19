@@ -18,10 +18,10 @@
 	};
 
 	const arrowClasses = {
-		top: 'top-full left-1/2 -translate-x-1/2 border-t-terminal-700',
-		bottom: 'bottom-full left-1/2 -translate-x-1/2 border-b-terminal-700',
-		left: 'left-full top-1/2 -translate-y-1/2 border-l-terminal-700',
-		right: 'right-full top-1/2 -translate-y-1/2 border-r-terminal-700'
+		top: 'top-full left-1/2 -translate-x-1/2 border-t-slate-800',
+		bottom: 'bottom-full left-1/2 -translate-x-1/2 border-b-slate-800',
+		left: 'left-full top-1/2 -translate-y-1/2 border-l-slate-800',
+		right: 'right-full top-1/2 -translate-y-1/2 border-r-slate-800'
 	};
 </script>
 
@@ -39,12 +39,12 @@
 
 	{#if visible}
 		<div
-			class="absolute z-50 px-3 py-2 text-sm bg-terminal-700 text-terminal-100 rounded-lg shadow-lg whitespace-nowrap animate-fade-in
+			class="absolute z-50 px-3 py-2 text-sm bg-slate-100 text-slate-800 rounded-lg shadow-lg whitespace-nowrap animate-fade-in
 				{positionClasses[position]}"
 			role="tooltip"
 		>
 			{content}
-			<div class="absolute w-2 h-2 bg-terminal-700 rotate-45
+			<div class="absolute w-2 h-2 bg-slate-100 rotate-45
 				{position === 'top' ? '-bottom-1' : ''}
 				{position === 'bottom' ? '-top-1' : ''}
 				{position === 'left' ? '-right-1' : ''}

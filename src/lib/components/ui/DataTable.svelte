@@ -86,18 +86,18 @@
 	}
 </script>
 
-<div class="card border-terminal-700 overflow-hidden">
+<div class="card border-slate-200 overflow-hidden">
 	<!-- Header with Search -->
 	{#if searchable}
-		<div class="p-4 border-b border-terminal-700">
+		<div class="p-4 border-b border-slate-200">
 			<div class="relative">
 				<input
 					type="text"
 					bind:value={searchQuery}
 					placeholder={searchPlaceholder}
-					class="w-full bg-terminal-700/50 border border-terminal-600 rounded-lg pl-10 pr-4 py-2.5 text-sm text-terminal-100 placeholder-terminal-500 focus:outline-none focus:ring-2 focus:ring-semantic-accent/50 focus:border-semantic-accent transition-all"
+					class="w-full bg-slate-100/50 border border-slate-300 rounded-lg pl-10 pr-4 py-2.5 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-semantic-accent/50 focus:border-semantic-accent transition-all"
 				/>
-				<svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-terminal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
 				</svg>
 			</div>
@@ -107,13 +107,13 @@
 	<!-- Table -->
 	<div class="overflow-x-auto">
 		<table class="w-full">
-			<thead class="bg-terminal-800/50">
+			<thead class="bg-white/50">
 				<tr>
 					{#each columns as col}
 						<th
-							class="px-4 py-3 text-xs font-semibold text-terminal-400 uppercase tracking-wider
+							class="px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider
 								{col.align === 'center' ? 'text-center' : col.align === 'right' ? 'text-right' : 'text-left'}
-								{col.sortable ? 'cursor-pointer hover:text-terminal-200 select-none' : ''}"
+								{col.sortable ? 'cursor-pointer hover:text-slate-700 select-none' : ''}"
 							style={col.width ? `width: ${col.width}` : ''}
 							onclick={() => col.sortable && toggleSort(String(col.key))}
 						>
@@ -130,33 +130,33 @@
 					{/each}
 				</tr>
 			</thead>
-			<tbody class="divide-y divide-terminal-700/50">
+			<tbody class="divide-y divide-slate-200/50">
 				{#if loading}
 					{#each Array(5) as _}
 						<tr>
 							{#each columns as _}
 								<td class="px-4 py-3">
-									<div class="h-4 bg-terminal-700 rounded animate-pulse w-3/4"></div>
+									<div class="h-4 bg-slate-100 rounded animate-pulse w-3/4"></div>
 								</td>
 							{/each}
 						</tr>
 					{/each}
 				{:else if paginatedData.length === 0}
 					<tr>
-						<td colspan={columns.length} class="px-4 py-12 text-center text-terminal-500">
+						<td colspan={columns.length} class="px-4 py-12 text-center text-slate-400">
 							{emptyMessage}
 						</td>
 					</tr>
 				{:else}
 					{#each paginatedData as row}
 						<tr
-							class="transition-colors hover:bg-terminal-700/30
+							class="transition-colors hover:bg-slate-100/50
 								{onRowClick ? 'cursor-pointer' : ''}"
 							onclick={() => onRowClick?.(row)}
 						>
 							{#each columns as col}
 								<td
-									class="px-4 py-3 text-sm text-terminal-200
+									class="px-4 py-3 text-sm text-slate-700
 										{col.align === 'center' ? 'text-center' : col.align === 'right' ? 'text-right' : ''}"
 								>
 									{getNestedValue(row, String(col.key))}
@@ -171,15 +171,15 @@
 
 	<!-- Pagination -->
 	{#if totalPages > 1}
-		<div class="flex items-center justify-between px-4 py-3 border-t border-terminal-700">
-			<p class="text-sm text-terminal-500">
+		<div class="flex items-center justify-between px-4 py-3 border-t border-slate-200">
+			<p class="text-sm text-slate-400">
 				Mostrando {(currentPage - 1) * pageSize + 1} - {Math.min(currentPage * pageSize, sortedData.length)} de {sortedData.length}
 			</p>
 			<div class="flex items-center gap-2">
 				<button
 					onclick={() => goToPage(currentPage - 1)}
 					disabled={currentPage === 1}
-					class="p-1.5 rounded-lg border border-terminal-600 text-terminal-400 hover:text-terminal-100 hover:bg-terminal-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+					class="p-1.5 rounded-lg border border-slate-300 text-slate-500 hover:text-slate-800 hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
 					aria-label="Página anterior"
 				>
 					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -194,19 +194,19 @@
 							class="w-8 h-8 rounded-lg text-sm font-medium transition-colors
 								{i + 1 === currentPage
 									? 'bg-semantic-accent text-white'
-									: 'border border-terminal-600 text-terminal-400 hover:text-terminal-100 hover:bg-terminal-700'}"
+									: 'border border-slate-300 text-slate-500 hover:text-slate-800 hover:bg-slate-100'}"
 						>
 							{i + 1}
 						</button>
 					{:else if i + 1 === currentPage - 2 || i + 1 === currentPage + 2}
-						<span class="text-terminal-500">...</span>
+						<span class="text-slate-400">...</span>
 					{/if}
 				{/each}
 
 				<button
 					onclick={() => goToPage(currentPage + 1)}
 					disabled={currentPage === totalPages}
-					class="p-1.5 rounded-lg border border-terminal-600 text-terminal-400 hover:text-terminal-100 hover:bg-terminal-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+					class="p-1.5 rounded-lg border border-slate-300 text-slate-500 hover:text-slate-800 hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
 					aria-label="Próxima página"
 				>
 					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

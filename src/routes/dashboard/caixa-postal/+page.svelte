@@ -24,7 +24,7 @@
 			INTIMACAO: { class: 'status-critical', label: 'Intimação' },
 			NOTIFICACAO: { class: 'status-warning', label: 'Notificação' },
 			TERMO_EXCLUSAO: { class: 'status-critical', label: 'Termo Exclusão' },
-			INFORMATIVA: { class: 'bg-terminal-700 text-terminal-300', label: 'Informativa' },
+			INFORMATIVA: { class: 'bg-slate-100 text-slate-600', label: 'Informativa' },
 			OTIMOS: { class: 'status-success', label: 'Otimoss' }
 		};
 		return badges[tipo] || badges.INFORMATIVA;
@@ -55,8 +55,8 @@
 	<!-- Header -->
 	<div class="flex items-center justify-between">
 		<div>
-			<h1 class="font-display text-2xl font-bold text-terminal-100">Caixa Postal e-CAC</h1>
-			<p class="text-terminal-500">Mensagens dos clientes</p>
+			<h1 class="font-display text-2xl font-bold text-slate-800">Caixa Postal e-CAC</h1>
+			<p class="text-slate-400">Mensagens dos clientes</p>
 		</div>
 		<div class="flex items-center gap-2">
 			<select bind:value={filterRelevancia} class="input w-40">
@@ -72,12 +72,12 @@
 	<div class="space-y-3">
 		{#each mensagensFiltradas as msg (msg.id)}
 			{@const badge = getTipoBadge(msg.tipo)}
-			<div class="card p-4 hover:border-terminal-600 transition-colors {!msg.lida && msg.relevancia === 'RELEVANTE' ? 'border-l-4 border-l-semantic-critical' : ''}">
+			<div class="card p-4 hover:border-slate-300 transition-colors {!msg.lida && msg.relevancia === 'RELEVANTE' ? 'border-l-4 border-l-semantic-critical' : ''}">
 				<div class="flex items-start gap-4">
 					<!-- Icon -->
 					<div class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0
-						{msg.relevancia === 'RELEVANTE' ? 'bg-semantic-critical/20' : 'bg-terminal-700'}">
-						<svg class="w-5 h-5 {msg.relevancia === 'RELEVANTE' ? 'text-semantic-critical' : 'text-terminal-400'}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						{msg.relevancia === 'RELEVANTE' ? 'bg-semantic-critical/20' : 'bg-slate-100'}">
+						<svg class="w-5 h-5 {msg.relevancia === 'RELEVANTE' ? 'text-semantic-critical' : 'text-slate-500'}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
 						</svg>
 					</div>
@@ -85,14 +85,14 @@
 					<!-- Content -->
 					<div class="flex-1 min-w-0">
 						<div class="flex items-center gap-2 mb-1">
-							<h3 class="font-medium text-terminal-100 {!msg.lida ? 'font-semibold' : ''}">{msg.titulo}</h3>
+							<h3 class="font-medium text-slate-800 {!msg.lida ? 'font-semibold' : ''}">{msg.titulo}</h3>
 							{#if !msg.lida}
 								<span class="w-2 h-2 rounded-full bg-semantic-accent"></span>
 							{/if}
 						</div>
 						<div class="flex items-center gap-3 text-sm">
-							<span class="text-terminal-400">{msg.cliente.nomeRazao}</span>
-							<span class="text-terminal-600">·</span>
+							<span class="text-slate-500">{msg.cliente.nomeRazao}</span>
+							<span class="text-slate-300">·</span>
 							<span class="status-badge {badge.class}">{badge.label}</span>
 							{#if msg.relevancia === 'RELEVANTE'}
 								<span class="status-badge bg-semantic-critical/20 text-semantic-critical">Relevante</span>
@@ -102,8 +102,8 @@
 
 					<!-- Date & Actions -->
 					<div class="flex items-center gap-3">
-						<span class="text-sm text-terminal-500">{formatDate(msg.data)}</span>
-						<button class="p-2 rounded-lg hover:bg-terminal-700 text-terminal-400 hover:text-terminal-100 transition-colors" aria-label="Mais ações">
+						<span class="text-sm text-slate-400">{formatDate(msg.data)}</span>
+						<button class="p-2 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-slate-800 transition-colors" aria-label="Mais ações">
 							<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z"/>
 							</svg>
@@ -113,10 +113,10 @@
 			</div>
 		{:else}
 			<div class="card p-8 text-center">
-				<svg class="w-12 h-12 text-terminal-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<svg class="w-12 h-12 text-slate-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
 				</svg>
-				<p class="text-terminal-500">Nenhuma mensagem encontrada</p>
+				<p class="text-slate-400">Nenhuma mensagem encontrada</p>
 			</div>
 		{/each}
 	</div>

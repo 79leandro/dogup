@@ -30,8 +30,8 @@
 	<!-- Header -->
 	<div class="flex items-center justify-between">
 		<div>
-			<h1 class="font-display text-2xl font-bold text-terminal-100">Certificados Digitais</h1>
-			<p class="text-terminal-500">Validade e-CAC e NF-e</p>
+			<h1 class="font-display text-2xl font-bold text-slate-800">Certificados Digitais</h1>
+			<p class="text-slate-400">Validade e-CAC e NF-e</p>
 		</div>
 		<button class="btn btn-primary flex items-center gap-2">
 			<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -44,20 +44,20 @@
 	<!-- Summary -->
 	<div class="grid grid-cols-4 gap-4">
 		<div class="card p-4 text-center">
-			<div class="text-2xl font-bold text-terminal-100">221</div>
-			<div class="text-xs text-terminal-500">Total</div>
+			<div class="text-2xl font-bold text-slate-800">221</div>
+			<div class="text-xs text-slate-400">Total</div>
 		</div>
 		<div class="card p-4 text-center border-l-4 border-l-semantic-success">
 			<div class="text-2xl font-bold text-semantic-success">180</div>
-			<div class="text-xs text-terminal-500">Válidos</div>
+			<div class="text-xs text-slate-400">Válidos</div>
 		</div>
 		<div class="card p-4 text-center border-l-4 border-l-semantic-warning">
 			<div class="text-2xl font-bold text-semantic-warning">29</div>
-			<div class="text-xs text-terminal-500">Próximo Vencimento</div>
+			<div class="text-xs text-slate-400">Próximo Vencimento</div>
 		</div>
 		<div class="card p-4 text-center border-l-4 border-l-semantic-critical">
 			<div class="text-2xl font-bold text-semantic-critical">12</div>
-			<div class="text-xs text-terminal-500">Vencidos</div>
+			<div class="text-xs text-slate-400">Vencidos</div>
 		</div>
 	</div>
 
@@ -65,27 +65,27 @@
 	<div class="card">
 		<div class="overflow-x-auto">
 			<table class="w-full">
-				<thead class="bg-terminal-700/50">
+				<thead class="bg-slate-100/50">
 					<tr>
-						<th class="text-left px-4 py-3 text-xs font-medium text-terminal-400 uppercase">CNPJ</th>
-						<th class="text-left px-4 py-3 text-xs font-medium text-terminal-400 uppercase">Cliente</th>
-						<th class="text-center px-4 py-3 text-xs font-medium text-terminal-400 uppercase">Tipo</th>
-						<th class="text-left px-4 py-3 text-xs font-medium text-terminal-400 uppercase">Responsável</th>
-						<th class="text-left px-4 py-3 text-xs font-medium text-terminal-400 uppercase">Validade</th>
-						<th class="text-left px-4 py-3 text-xs font-medium text-terminal-400 uppercase">Status</th>
+						<th class="text-left px-4 py-3 text-xs font-medium text-slate-500 uppercase">CNPJ</th>
+						<th class="text-left px-4 py-3 text-xs font-medium text-slate-500 uppercase">Cliente</th>
+						<th class="text-center px-4 py-3 text-xs font-medium text-slate-500 uppercase">Tipo</th>
+						<th class="text-left px-4 py-3 text-xs font-medium text-slate-500 uppercase">Responsável</th>
+						<th class="text-left px-4 py-3 text-xs font-medium text-slate-500 uppercase">Validade</th>
+						<th class="text-left px-4 py-3 text-xs font-medium text-slate-500 uppercase">Status</th>
 					</tr>
 				</thead>
-				<tbody class="divide-y divide-terminal-700">
+				<tbody class="divide-y divide-slate-200">
 					{#each certificados as cert}
 						{@const statusInfo = getStatusInfo(cert.status, cert.validade)}
-						<tr class="hover:bg-terminal-700/30">
-							<td class="px-4 py-4 text-sm font-mono text-terminal-200">{cert.cnpj}</td>
-							<td class="px-4 py-4 text-sm text-terminal-100">{cert.cliente}</td>
+						<tr class="hover:bg-slate-100/50">
+							<td class="px-4 py-4 text-sm font-mono text-slate-700">{cert.cnpj}</td>
+							<td class="px-4 py-4 text-sm text-slate-800">{cert.cliente}</td>
 							<td class="px-4 py-4 text-center">
-								<span class="px-2 py-1 rounded bg-terminal-700 text-terminal-200 text-sm font-medium">{cert.tipo}</span>
+								<span class="px-2 py-1 rounded bg-slate-100 text-slate-700 text-sm font-medium">{cert.tipo}</span>
 							</td>
-							<td class="px-4 py-4 text-sm text-terminal-300">{cert.responsavel}</td>
-							<td class="px-4 py-4 text-sm text-terminal-300">{cert.validade}</td>
+							<td class="px-4 py-4 text-sm text-slate-600">{cert.responsavel}</td>
+							<td class="px-4 py-4 text-sm text-slate-600">{cert.validade}</td>
 							<td class="px-4 py-4">
 								<span class="status-badge {statusInfo.class}">{statusInfo.label}</span>
 							</td>

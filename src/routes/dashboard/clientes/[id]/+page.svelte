@@ -106,14 +106,14 @@
 		<!-- Header -->
 		<div class="flex items-center justify-between">
 			<div class="flex items-center gap-4">
-				<a href="/dashboard/clientes" aria-label="Voltar para clientes" class="p-2 rounded-lg hover:bg-terminal-700 text-terminal-400 hover:text-terminal-100 transition-colors">
+				<a href="/dashboard/clientes" aria-label="Voltar para clientes" class="p-2 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-slate-800 transition-colors">
 					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
 					</svg>
 				</a>
 				<div>
-					<h1 class="font-display text-2xl font-bold text-terminal-100">{cliente.nomeRazao}</h1>
-					<p class="text-terminal-500">{formatCNPJ(cliente.cnpj)}</p>
+					<h1 class="font-display text-2xl font-bold text-slate-800">{cliente.nomeRazao}</h1>
+					<p class="text-slate-400">{formatCNPJ(cliente.cnpj)}</p>
 				</div>
 				<span class="badge {clienteSituacao.class}">{clienteSituacao.label}</span>
 			</div>
@@ -146,7 +146,7 @@
 			<div class="lg:col-span-2 space-y-6">
 				<!-- Dados Cadastrais -->
 				<div class="card p-6">
-					<h2 class="font-semibold text-terminal-100 mb-4 flex items-center gap-2">
+					<h2 class="font-semibold text-slate-800 mb-4 flex items-center gap-2">
 						<svg class="w-5 h-5 text-semantic-info" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
 						</svg>
@@ -155,27 +155,27 @@
 
 					<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 						<div>
-							<span class="text-xs text-terminal-500 uppercase tracking-wide block">Razão Social</span>
-							<p class="text-terminal-100 mt-1">{cliente.nomeRazao}</p>
+							<span class="text-xs text-slate-400 uppercase tracking-wide block">Razão Social</span>
+							<p class="text-slate-800 mt-1">{cliente.nomeRazao}</p>
 						</div>
 
 						{#if cliente.nomeFantasia}
 							<div>
-								<span class="text-xs text-terminal-500 uppercase tracking-wide block">Nome Fantasia</span>
-								<p class="text-terminal-100 mt-1">{cliente.nomeFantasia}</p>
+								<span class="text-xs text-slate-400 uppercase tracking-wide block">Nome Fantasia</span>
+								<p class="text-slate-800 mt-1">{cliente.nomeFantasia}</p>
 							</div>
 						{/if}
 
 						<div>
-							<span class="text-xs text-terminal-500 uppercase tracking-wide block">Regime Tributário</span>
-							<p class="text-terminal-100 mt-1">
+							<span class="text-xs text-slate-400 uppercase tracking-wide block">Regime Tributário</span>
+							<p class="text-slate-800 mt-1">
 								{cliente.regime === 'SIMPLES_NACIONAL' ? 'Simples Nacional' : 'Normal'}
 							</p>
 						</div>
 
 						<div>
-							<span class="text-xs text-terminal-500 uppercase tracking-wide block">CNPJ</span>
-							<p class="text-terminal-100 mt-1 font-mono">{formatCNPJ(cliente.cnpj)}</p>
+							<span class="text-xs text-slate-400 uppercase tracking-wide block">CNPJ</span>
+							<p class="text-slate-800 mt-1 font-mono">{formatCNPJ(cliente.cnpj)}</p>
 						</div>
 					</div>
 				</div>
@@ -183,7 +183,7 @@
 				<!-- Endereço -->
 				{#if cliente.logradouro || cliente.cidade || cliente.uf}
 					<div class="card p-6">
-						<h2 class="font-semibold text-terminal-100 mb-4 flex items-center gap-2">
+						<h2 class="font-semibold text-slate-800 mb-4 flex items-center gap-2">
 							<svg class="w-5 h-5 text-semantic-info" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
@@ -194,22 +194,22 @@
 						<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 							{#if cliente.logradouro}
 								<div class="md:col-span-2">
-									<span class="text-xs text-terminal-500 uppercase tracking-wide block">Logradouro</span>
-									<p class="text-terminal-100 mt-1">{cliente.logradouro}</p>
+									<span class="text-xs text-slate-400 uppercase tracking-wide block">Logradouro</span>
+									<p class="text-slate-800 mt-1">{cliente.logradouro}</p>
 								</div>
 							{/if}
 
 							{#if cliente.cidade}
 								<div>
-									<span class="text-xs text-terminal-500 uppercase tracking-wide block">Cidade</span>
-									<p class="text-terminal-100 mt-1">{cliente.cidade}{cliente.uf ? ` - ${cliente.uf}` : ''}</p>
+									<span class="text-xs text-slate-400 uppercase tracking-wide block">Cidade</span>
+									<p class="text-slate-800 mt-1">{cliente.cidade}{cliente.uf ? ` - ${cliente.uf}` : ''}</p>
 								</div>
 							{/if}
 
 							{#if cliente.cep}
 								<div>
-									<span class="text-xs text-terminal-500 uppercase tracking-wide block">CEP</span>
-									<p class="text-terminal-100 mt-1">{formatCEP(cliente.cep)}</p>
+									<span class="text-xs text-slate-400 uppercase tracking-wide block">CEP</span>
+									<p class="text-slate-800 mt-1">{formatCEP(cliente.cep)}</p>
 								</div>
 							{/if}
 						</div>
@@ -219,7 +219,7 @@
 				<!-- Contato -->
 				{#if cliente.email || cliente.telefone || cliente.responsavelTecnico}
 					<div class="card p-6">
-						<h2 class="font-semibold text-terminal-100 mb-4 flex items-center gap-2">
+						<h2 class="font-semibold text-slate-800 mb-4 flex items-center gap-2">
 							<svg class="w-5 h-5 text-semantic-info" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
 							</svg>
@@ -229,22 +229,22 @@
 						<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 							{#if cliente.email}
 								<div>
-									<span class="text-xs text-terminal-500 uppercase tracking-wide block">E-mail</span>
-									<p class="text-terminal-100 mt-1">{cliente.email}</p>
+									<span class="text-xs text-slate-400 uppercase tracking-wide block">E-mail</span>
+									<p class="text-slate-800 mt-1">{cliente.email}</p>
 								</div>
 							{/if}
 
 							{#if cliente.telefone}
 								<div>
-									<span class="text-xs text-terminal-500 uppercase tracking-wide block">Telefone</span>
-									<p class="text-terminal-100 mt-1">{cliente.telefone}</p>
+									<span class="text-xs text-slate-400 uppercase tracking-wide block">Telefone</span>
+									<p class="text-slate-800 mt-1">{cliente.telefone}</p>
 								</div>
 							{/if}
 
 							{#if cliente.responsavelTecnico}
 								<div class="md:col-span-2">
-									<span class="text-xs text-terminal-500 uppercase tracking-wide block">Responsável Técnico</span>
-									<p class="text-terminal-100 mt-1">{cliente.responsavelTecnico}</p>
+									<span class="text-xs text-slate-400 uppercase tracking-wide block">Responsável Técnico</span>
+									<p class="text-slate-800 mt-1">{cliente.responsavelTecnico}</p>
 								</div>
 							{/if}
 						</div>
@@ -256,24 +256,24 @@
 			<div class="space-y-6">
 				<!-- Quick Stats -->
 				<div class="card p-6">
-					<h2 class="font-semibold text-terminal-100 mb-4">Resumo</h2>
+					<h2 class="font-semibold text-slate-800 mb-4">Resumo</h2>
 
 					<div class="space-y-4">
-						<div class="flex items-center justify-between py-2 border-b border-terminal-700">
-							<span class="text-terminal-500">Obrigações</span>
-							<span class="text-terminal-100 font-medium">{cliente._count?.obrigacoes || 0}</span>
+						<div class="flex items-center justify-between py-2 border-b border-slate-200">
+							<span class="text-slate-400">Obrigações</span>
+							<span class="text-slate-800 font-medium">{cliente._count?.obrigacoes || 0}</span>
 						</div>
-						<div class="flex items-center justify-between py-2 border-b border-terminal-700">
-							<span class="text-terminal-500">Parcelamentos</span>
-							<span class="text-terminal-100 font-medium">{cliente._count?.parcelamentos || 0}</span>
+						<div class="flex items-center justify-between py-2 border-b border-slate-200">
+							<span class="text-slate-400">Parcelamentos</span>
+							<span class="text-slate-800 font-medium">{cliente._count?.parcelamentos || 0}</span>
 						</div>
-						<div class="flex items-center justify-between py-2 border-b border-terminal-700">
-							<span class="text-terminal-500">Mensagens</span>
-							<span class="text-terminal-100 font-medium">{cliente._count?.mensagens || 0}</span>
+						<div class="flex items-center justify-between py-2 border-b border-slate-200">
+							<span class="text-slate-400">Mensagens</span>
+							<span class="text-slate-800 font-medium">{cliente._count?.mensagens || 0}</span>
 						</div>
 						<div class="flex items-center justify-between py-2">
-							<span class="text-terminal-500">Cadastro</span>
-							<span class="text-terminal-100 font-medium text-sm">
+							<span class="text-slate-400">Cadastro</span>
+							<span class="text-slate-800 font-medium text-sm">
 								{new Date(cliente.createdAt).toLocaleDateString('pt-BR')}
 							</span>
 						</div>
@@ -282,12 +282,12 @@
 
 				<!-- Quick Actions -->
 				<div class="card p-6">
-					<h2 class="font-semibold text-terminal-100 mb-4">Ações Rápidas</h2>
+					<h2 class="font-semibold text-slate-800 mb-4">Ações Rápidas</h2>
 
 					<div class="space-y-2">
 						<a
 							href="/dashboard/obrigacoes?cliente={cliente.id}"
-							class="flex items-center gap-3 p-3 rounded-lg hover:bg-terminal-700/50 transition-colors text-terminal-300 hover:text-terminal-100"
+							class="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-100/50 transition-colors text-slate-600 hover:text-slate-800"
 						>
 							<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
@@ -296,7 +296,7 @@
 						</a>
 						<a
 							href="/dashboard/parcelamentos?cliente={cliente.id}"
-							class="flex items-center gap-3 p-3 rounded-lg hover:bg-terminal-700/50 transition-colors text-terminal-300 hover:text-terminal-100"
+							class="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-100/50 transition-colors text-slate-600 hover:text-slate-800"
 						>
 							<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
@@ -305,7 +305,7 @@
 						</a>
 						<a
 							href="/dashboard/caixa-postal?cliente={cliente.id}"
-							class="flex items-center gap-3 p-3 rounded-lg hover:bg-terminal-700/50 transition-colors text-terminal-300 hover:text-terminal-100"
+							class="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-100/50 transition-colors text-slate-600 hover:text-slate-800"
 						>
 							<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
@@ -318,7 +318,7 @@
 		</div>
 	{:else}
 		<div class="text-center py-12">
-			<p class="text-terminal-500">Cliente não encontrado</p>
+			<p class="text-slate-400">Cliente não encontrado</p>
 			<a href="/dashboard/clientes" class="btn btn-primary mt-4">
 				Voltar para Clientes
 			</a>

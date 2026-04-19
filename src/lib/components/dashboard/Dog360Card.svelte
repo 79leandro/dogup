@@ -6,8 +6,8 @@
 	<!-- Header -->
 	<div class="flex items-center justify-between mb-6">
 		<div>
-			<h2 class="font-display font-bold text-lg text-terminal-100">DOGUP 360°</h2>
-			<p class="text-sm text-terminal-500">Gestão de Clientes</p>
+			<h2 class="font-display font-bold text-lg text-slate-800">DOGUP 360°</h2>
+			<p class="text-sm text-slate-400">Gestão de Clientes</p>
 		</div>
 		<div class="w-10 h-10 rounded-xl bg-semantic-info/10 flex items-center justify-center">
 			<svg class="w-5 h-5 text-semantic-info" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -17,11 +17,11 @@
 	</div>
 
 	<!-- Total -->
-	<div class="text-center py-6 border-b border-terminal-700">
-		<div class="text-5xl font-display font-bold text-terminal-100 animate-count-up">
+	<div class="text-center py-6 border-b border-slate-200">
+		<div class="text-5xl font-display font-bold text-slate-800 animate-count-up">
 			{total}
 		</div>
-		<div class="text-sm text-terminal-500 mt-1">CNPJs Ativos</div>
+		<div class="text-sm text-slate-400 mt-1">CNPJs Ativos</div>
 	</div>
 
 	<!-- Breakdown -->
@@ -33,9 +33,9 @@
 				<div class="w-2 h-2 rounded-full bg-semantic-success animate-pulse"></div>
 			</div>
 			<div class="text-2xl font-bold text-semantic-success">{simplesNacional.count}</div>
-			<div class="text-sm text-terminal-500 mt-1">{simplesNacional.percentage}%</div>
+			<div class="text-sm text-slate-400 mt-1">{simplesNacional.percentage}%</div>
 			<!-- Progress bar -->
-			<div class="mt-3 h-1.5 bg-terminal-700 rounded-full overflow-hidden">
+			<div class="mt-3 h-1.5 bg-slate-100 rounded-full overflow-hidden">
 				<div
 					class="h-full bg-semantic-success rounded-full transition-all duration-1000"
 					style="width: {simplesNacional.percentage}%"
@@ -50,9 +50,9 @@
 				<div class="w-2 h-2 rounded-full bg-semantic-info"></div>
 			</div>
 			<div class="text-2xl font-bold text-semantic-info">{normal.count}</div>
-			<div class="text-sm text-terminal-500 mt-1">{normal.percentage}%</div>
+			<div class="text-sm text-slate-400 mt-1">{normal.percentage}%</div>
 			<!-- Progress bar -->
-			<div class="mt-3 h-1.5 bg-terminal-700 rounded-full overflow-hidden">
+			<div class="mt-3 h-1.5 bg-slate-100 rounded-full overflow-hidden">
 				<div
 					class="h-full bg-semantic-info rounded-full transition-all duration-1000"
 					style="width: {normal.percentage}%"

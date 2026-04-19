@@ -120,13 +120,13 @@
 
 <div class="card p-6">
 	<div class="flex items-center justify-between mb-6">
-		<h2 class="font-semibold text-terminal-100 flex items-center gap-2">
+		<h2 class="font-semibold text-slate-800 flex items-center gap-2">
 			<svg class="w-5 h-5 text-semantic-info" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
 			</svg>
 			Transmissão DCTFWeb
 		</h2>
-		<span class="text-sm text-terminal-500">{clienteNome}</span>
+		<span class="text-sm text-slate-400">{clienteNome}</span>
 	</div>
 
 	{#if transmissionStatus === 'idle' || transmissionStatus === 'processing'}
@@ -251,25 +251,25 @@
 				</svg>
 			</div>
 
-			<h3 class="text-lg font-semibold text-terminal-100 mb-2">Transmissão Concluída</h3>
+			<h3 class="text-lg font-semibold text-slate-800 mb-2">Transmissão Concluída</h3>
 
 			<div class="space-y-2 text-sm mt-6">
 				{#if transmissionResult?.protocolo}
-					<div class="flex justify-between py-2 border-b border-terminal-700">
-						<span class="text-terminal-500">Protocolo</span>
-						<span class="text-terminal-100 font-mono">{transmissionResult.protocolo}</span>
+					<div class="flex justify-between py-2 border-b border-slate-200">
+						<span class="text-slate-400">Protocolo</span>
+						<span class="text-slate-800 font-mono">{transmissionResult.protocolo}</span>
 					</div>
 				{/if}
 				{#if transmissionResult?.recibo}
-					<div class="flex justify-between py-2 border-b border-terminal-700">
-						<span class="text-terminal-500">Recibo</span>
-						<span class="text-terminal-100 font-mono">{transmissionResult.recibo}</span>
+					<div class="flex justify-between py-2 border-b border-slate-200">
+						<span class="text-slate-400">Recibo</span>
+						<span class="text-slate-800 font-mono">{transmissionResult.recibo}</span>
 					</div>
 				{/if}
 				{#if transmissionResult?.dataEnvio}
 					<div class="flex justify-between py-2">
-						<span class="text-terminal-500">Data/Hora</span>
-						<span class="text-terminal-100">
+						<span class="text-slate-400">Data/Hora</span>
+						<span class="text-slate-800">
 							{new Date(transmissionResult.dataEnvio).toLocaleString('pt-BR')}
 						</span>
 					</div>
@@ -292,8 +292,8 @@
 				</svg>
 			</div>
 
-			<h3 class="text-lg font-semibold text-terminal-100 mb-2">Erro na Transmissão</h3>
-			<p class="text-terminal-500 mt-2">{transmissionResult?.erro || 'Ocorreu um erro desconhecido'}</p>
+			<h3 class="text-lg font-semibold text-slate-800 mb-2">Erro na Transmissão</h3>
+			<p class="text-slate-400 mt-2">{transmissionResult?.erro || 'Ocorreu um erro desconhecido'}</p>
 
 			<button
 				onclick={resetForm}

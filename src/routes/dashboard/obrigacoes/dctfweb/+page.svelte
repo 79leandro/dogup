@@ -25,23 +25,23 @@
 <div class="space-y-6 animate-fade-in">
 	<!-- Header -->
 	<div>
-		<h1 class="font-display text-2xl font-bold text-terminal-100">DCTFWeb em Andamento</h1>
-		<p class="text-terminal-500">Declarações sendo processadas ou com inconsistências</p>
+		<h1 class="font-display text-2xl font-bold text-slate-800">DCTFWeb em Andamento</h1>
+		<p class="text-slate-400">Declarações sendo processadas ou com inconsistências</p>
 	</div>
 
 	<!-- Stats -->
 	<div class="grid grid-cols-3 gap-4">
 		<div class="card p-5 border-l-4 border-l-semantic-warning">
 			<div class="text-3xl font-bold text-semantic-warning">{obrigacoes.filter(o => o.status === 'EM_PROCESSAMENTO').length}</div>
-			<div class="text-sm text-terminal-500">Em Processamento</div>
+			<div class="text-sm text-slate-400">Em Processamento</div>
 		</div>
 		<div class="card p-5 border-l-4 border-l-semantic-critical">
 			<div class="text-3xl font-bold text-semantic-critical">{obrigacoes.filter(o => o.status === 'INCONSISTENCIA').length}</div>
-			<div class="text-sm text-terminal-500">Com Inconsistência</div>
+			<div class="text-sm text-slate-400">Com Inconsistência</div>
 		</div>
 		<div class="card p-5 border-l-4 border-l-semantic-success">
 			<div class="text-3xl font-bold text-semantic-success">{obrigacoes.filter(o => o.status === 'ENTREGUE').length}</div>
-			<div class="text-sm text-terminal-500">Entregues (Total)</div>
+			<div class="text-sm text-slate-400">Entregues (Total)</div>
 		</div>
 	</div>
 
@@ -49,26 +49,26 @@
 	<div class="card">
 		<div class="overflow-x-auto">
 			<table class="w-full">
-				<thead class="bg-terminal-700/50">
+				<thead class="bg-slate-100/50">
 					<tr>
-						<th class="text-left px-4 py-3 text-xs font-medium text-terminal-400 uppercase">CNPJ</th>
-						<th class="text-left px-4 py-3 text-xs font-medium text-terminal-400 uppercase">Cliente</th>
-						<th class="text-center px-4 py-3 text-xs font-medium text-terminal-400 uppercase">Período</th>
-						<th class="text-left px-4 py-3 text-xs font-medium text-terminal-400 uppercase">Status</th>
-						<th class="text-left px-4 py-3 text-xs font-medium text-terminal-400 uppercase">Início</th>
+						<th class="text-left px-4 py-3 text-xs font-medium text-slate-500 uppercase">CNPJ</th>
+						<th class="text-left px-4 py-3 text-xs font-medium text-slate-500 uppercase">Cliente</th>
+						<th class="text-center px-4 py-3 text-xs font-medium text-slate-500 uppercase">Período</th>
+						<th class="text-left px-4 py-3 text-xs font-medium text-slate-500 uppercase">Status</th>
+						<th class="text-left px-4 py-3 text-xs font-medium text-slate-500 uppercase">Início</th>
 					</tr>
 				</thead>
-				<tbody class="divide-y divide-terminal-700">
+				<tbody class="divide-y divide-slate-200">
 					{#each obrigacoes as obg}
 						{@const statusInfo = getStatusInfo(obg.status)}
-						<tr class="hover:bg-terminal-700/30">
-							<td class="px-4 py-4 text-sm font-mono text-terminal-200">{obg.cnpj}</td>
-							<td class="px-4 py-4 text-sm text-terminal-100">{obg.cliente}</td>
-							<td class="px-4 py-4 text-center text-sm text-terminal-300">{getMonthName(obg.mes)}/{obg.ano}</td>
+						<tr class="hover:bg-slate-100/50">
+							<td class="px-4 py-4 text-sm font-mono text-slate-700">{obg.cnpj}</td>
+							<td class="px-4 py-4 text-sm text-slate-800">{obg.cliente}</td>
+							<td class="px-4 py-4 text-center text-sm text-slate-600">{getMonthName(obg.mes)}/{obg.ano}</td>
 							<td class="px-4 py-4">
 								<span class="status-badge {statusInfo.class}">{statusInfo.label}</span>
 							</td>
-							<td class="px-4 py-4 text-sm text-terminal-300">{obg.inicio}</td>
+							<td class="px-4 py-4 text-sm text-slate-600">{obg.inicio}</td>
 						</tr>
 					{/each}
 				</tbody>

@@ -120,8 +120,8 @@
 	<!-- Header -->
 	<div class="flex items-center justify-between">
 		<div>
-			<h1 class="font-display text-2xl font-bold text-terminal-100">DOGUP 360°</h1>
-			<p class="text-terminal-500">Gestão completa da base de clientes</p>
+			<h1 class="font-display text-2xl font-bold text-slate-800">DOGUP 360°</h1>
+			<p class="text-slate-400">Gestão completa da base de clientes</p>
 		</div>
 		<a href="/dashboard/clientes/novo" class="btn btn-primary flex items-center gap-2">
 			<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -142,8 +142,8 @@
 						</svg>
 					</div>
 					<div>
-						<div class="text-2xl font-bold text-terminal-100">{clientes.length}</div>
-						<div class="text-sm text-terminal-500">Total de Clientes</div>
+						<div class="text-2xl font-bold text-slate-800">{clientes.length}</div>
+						<div class="text-sm text-slate-400">Total de Clientes</div>
 					</div>
 				</div>
 			</div>
@@ -158,7 +158,7 @@
 						<div class="text-2xl font-bold text-semantic-success">
 							{clientes.filter(c => c.regime === 'SIMPLES_NACIONAL').length}
 						</div>
-						<div class="text-sm text-terminal-500">Simples Nacional</div>
+						<div class="text-sm text-slate-400">Simples Nacional</div>
 					</div>
 				</div>
 			</div>
@@ -173,7 +173,7 @@
 						<div class="text-2xl font-bold text-semantic-info">
 							{clientes.filter(c => c.regime === 'NORMAL').length}
 						</div>
-						<div class="text-sm text-terminal-500">Normal</div>
+						<div class="text-sm text-slate-400">Normal</div>
 					</div>
 				</div>
 			</div>

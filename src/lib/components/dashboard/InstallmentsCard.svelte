@@ -23,8 +23,8 @@
 	<!-- Header -->
 	<div class="flex items-center justify-between mb-6">
 		<div>
-			<h2 class="font-display font-bold text-lg text-terminal-100">Parcelamentos</h2>
-			<p class="text-sm text-terminal-500">Federais</p>
+			<h2 class="font-display font-bold text-lg text-slate-800">Parcelamentos</h2>
+			<p class="text-sm text-slate-400">Federais</p>
 		</div>
 		<div class="relative">
 			<div class="w-10 h-10 rounded-xl bg-semantic-warning/10 flex items-center justify-center">
@@ -44,12 +44,12 @@
 	<div class="space-y-3">
 		{#each validParcelamentos as item (item.tipo)}
 			{@const urgency = getUrgencyColor(item.emAtraso, item.total)}
-			<div class="relative p-4 rounded-xl bg-terminal-700/30 border border-terminal-700 group hover:border-terminal-600 transition-colors">
+			<div class="relative p-4 rounded-xl bg-slate-100/50 border border-slate-200 group hover:border-slate-300 transition-colors">
 				<!-- Urgency indicator -->
 				{#if item.emAtraso > 0}
 					<div class="absolute -top-2 -right-2 px-2 py-0.5 rounded-full text-[10px] font-bold
 						{urgency === 'critical' ? 'bg-semantic-critical text-white' : ''}
-						{urgency === 'warning' ? 'bg-semantic-warning text-terminal-900' : ''}
+						{urgency === 'warning' ? 'bg-semantic-warning text-slate-900' : ''}
 						{urgency === 'success' ? 'bg-semantic-success text-white' : ''}
 						shadow-lg"
 					>
@@ -81,7 +81,7 @@
 						</div>
 
 						<div>
-							<div class="text-sm font-medium text-terminal-200">{item.tipo}</div>
+							<div class="text-sm font-medium text-slate-700">{item.tipo}</div>
 							{#if item.emAtraso > 0}
 								<div class="text-xs text-semantic-critical/80">{item.emAtraso} em atraso</div>
 							{/if}
@@ -89,13 +89,13 @@
 					</div>
 
 					<div class="text-right">
-						<div class="text-lg font-bold text-terminal-100">{item.total}</div>
-						<div class="text-xs text-terminal-500">total</div>
+						<div class="text-lg font-bold text-slate-800">{item.total}</div>
+						<div class="text-xs text-slate-400">total</div>
 					</div>
 				</div>
 
 				<!-- progress bar -->
-				<div class="mt-3 h-1.5 bg-terminal-700 rounded-full overflow-hidden">
+				<div class="mt-3 h-1.5 bg-slate-100 rounded-full overflow-hidden">
 					<div
 						class="h-full rounded-full transition-all duration-500
 							{urgency === 'critical' ? 'bg-semantic-critical' : ''}

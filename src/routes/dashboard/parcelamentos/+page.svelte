@@ -55,8 +55,8 @@
 	<!-- Header -->
 	<div class="flex items-center justify-between">
 		<div>
-			<h1 class="font-display text-2xl font-bold text-terminal-100">Parcelamentos Federais</h1>
-			<p class="text-terminal-500">Acompanhamento de débitos parcelados</p>
+			<h1 class="font-display text-2xl font-bold text-slate-800">Parcelamentos Federais</h1>
+			<p class="text-slate-400">Acompanhamento de débitos parcelados</p>
 		</div>
 		<button class="btn btn-primary flex items-center gap-2">
 			<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -70,8 +70,8 @@
 	<div class="grid grid-cols-2 md:grid-cols-5 gap-4">
 		{#each summaryItems as item}
 			<div class="card p-4 text-center">
-				<div class="text-xs text-terminal-500 uppercase mb-2">{item.tipo}</div>
-				<div class="text-2xl font-bold text-terminal-100">{item.total}</div>
+				<div class="text-xs text-slate-400 uppercase mb-2">{item.tipo}</div>
+				<div class="text-2xl font-bold text-slate-800">{item.total}</div>
 				{#if item.atraso > 0}
 					<div class="mt-1 px-2 py-0.5 rounded text-xs font-medium bg-semantic-critical/20 text-semantic-critical inline-block">
 						{item.atraso} em atraso
@@ -83,8 +83,8 @@
 		{:else}
 			{#each ['PGFN', 'Simples', 'Simplif.', 'Não Prev.', 'Prev.'] as tipo, i}
 				<div class="card p-4 text-center">
-					<div class="text-xs text-terminal-500 uppercase mb-2">{tipo}</div>
-					<div class="text-2xl font-bold text-terminal-100">0</div>
+					<div class="text-xs text-slate-400 uppercase mb-2">{tipo}</div>
+					<div class="text-2xl font-bold text-slate-800">0</div>
 					<div class="mt-1 text-xs text-semantic-success">Ok</div>
 				</div>
 			{/each}

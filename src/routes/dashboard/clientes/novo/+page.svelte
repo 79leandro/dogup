@@ -15,8 +15,8 @@
 	<!-- Header -->
 	<div class="flex items-center justify-between">
 		<div>
-			<h1 class="font-display text-2xl font-bold text-terminal-100">Novo Cliente</h1>
-			<p class="text-terminal-500 mt-1">Cadastre um novo cliente na base</p>
+			<h1 class="font-display text-2xl font-bold text-slate-800">Novo Cliente</h1>
+			<p class="text-slate-400 mt-1">Cadastre um novo cliente na base</p>
 		</div>
 	</div>
 

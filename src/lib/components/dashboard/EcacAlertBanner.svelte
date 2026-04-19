@@ -30,7 +30,7 @@
 			<!-- Action -->
 			<a
 				href="/dashboard/caixa-postal"
-				class="flex-shrink-0 px-4 py-2 bg-semantic-warning text-terminal-900 font-medium text-sm rounded-lg hover:bg-semantic-warning/90 transition-colors"
+				class="flex-shrink-0 px-4 py-2 bg-semantic-warning text-slate-900 font-medium text-sm rounded-lg hover:bg-semantic-warning/90 transition-colors"
 			>
 				Ver Mensagens
 			</a>

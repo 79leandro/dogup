@@ -65,8 +65,8 @@
 	<canvas bind:this={canvas}></canvas>
 	<div class="absolute inset-0 flex items-center justify-center pointer-events-none">
 		<div class="text-center">
-			<p class="text-2xl font-bold text-terminal-50">{data.reduce((a, b) => a + b, 0)}</p>
-			<p class="text-xs text-terminal-500">Total</p>
+			<p class="text-2xl font-bold text-slate-900">{data.reduce((a, b) => a + b, 0)}</p>
+			<p class="text-xs text-slate-400">Total</p>
 		</div>
 	</div>
 </div>
