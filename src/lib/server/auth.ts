@@ -10,6 +10,11 @@ export interface SessionUser {
 	empresaId: string;
 	empresaNome: string;
 	empresaSlug: string;
+	perfil?: {
+		nome: string;
+		isAdmin: boolean;
+		permissoes: string[];
+	};
 }
 
 export async function getSession(event: RequestEvent): Promise<SessionUser | null> {
@@ -25,7 +30,12 @@ export async function getSession(event: RequestEvent): Promise<SessionUser | nul
 			where: { token },
 			include: {
 				usuario: {
-					include: { empresa: true }
+					include: { 
+						empresa: true,
+						perfil: {
+							include: { permissoes: true }
+						}
+					}
 				}
 			}
 		});
@@ -47,7 +57,12 @@ export async function getSession(event: RequestEvent): Promise<SessionUser | nul
 			nome: session.usuario.nome,
 			empresaId: session.usuario.empresaId,
 			empresaNome: session.usuario.empresa.nome,
-			empresaSlug: session.usuario.empresa.slug
+			empresaSlug: session.usuario.empresa.slug,
+			perfil: session.usuario.perfil ? {
+				nome: session.usuario.perfil.nome,
+				isAdmin: session.usuario.perfil.isAdmin,
+				permissoes: session.usuario.perfil.permissoes.map(p => p.codigo)
+			} : undefined
 		};
 	} catch (error) {
 		console.error('Session validation error:', error);
@@ -72,7 +87,12 @@ export async function login(
 		const prisma = getPrisma();
 		const user = await prisma.usuario.findUnique({
 			where: { email },
-			include: { empresa: true }
+			include: { 
+				empresa: true,
+				perfil: {
+					include: { permissoes: true }
+				}
+			}
 		});
 
 		if (!user) {
@@ -115,7 +135,12 @@ export async function login(
 				nome: user.nome,
 				empresaId: user.empresaId,
 				empresaNome: user.empresa.nome,
-				empresaSlug: user.empresa.slug
+				empresaSlug: user.empresa.slug,
+				perfil: user.perfil ? {
+					nome: user.perfil.nome,
+					isAdmin: user.perfil.isAdmin,
+					permissoes: user.perfil.permissoes.map(p => p.codigo)
+				} : undefined
 			}
 		};
 	} catch (error) {

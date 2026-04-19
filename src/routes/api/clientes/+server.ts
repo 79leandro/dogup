@@ -73,7 +73,7 @@ export const POST: RequestHandler = async (event) => {
 		});
 
 		if (existingCliente) {
-			return json({ error: 'Já existe um cliente com este CNPJ' }, { status: 409 });
+			return json({ error: 'Cliente já existente' }, { status: 409 });
 		}
 
 		const cliente = await createCliente(user.empresaId, {

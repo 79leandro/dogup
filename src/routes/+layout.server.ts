@@ -13,7 +13,8 @@ export const load: LayoutServerLoad = async (event) => {
 					nome: user.nome,
 					empresaId: user.empresaId,
 					empresaNome: user.empresaNome,
-					empresaSlug: user.empresaSlug
+					empresaSlug: user.empresaSlug,
+					perfil: user.perfil
 				}
 			: null
 	};

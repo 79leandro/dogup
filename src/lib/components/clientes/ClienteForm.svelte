@@ -41,6 +41,7 @@
 		regime: 'SIMPLES_NACIONAL',
 		situacaoFiscal: 'REGULAR',
 		logradouro: '',
+		bairro: '',
 		cidade: '',
 		uf: '',
 		cep: '',
@@ -59,6 +60,7 @@
 				regime: cliente.regime || 'SIMPLES_NACIONAL',
 				situacaoFiscal: cliente.situacaoFiscal || 'REGULAR',
 				logradouro: cliente.logradouro || '',
+				bairro: (cliente as any).bairro || '',
 				cidade: cliente.cidade || '',
 				uf: cliente.uf || '',
 				cep: cliente.cep || '',
@@ -79,10 +81,22 @@
 
 	function handleCNPJInput(e: Event) {
 		const input = e.target as HTMLInputElement;
-		const formatted = formatCNPJInput(input.value);
-		formData.cnpj = formatted;
-		// Validate on input for immediate feedback
-		cnpjError = getCNPJErrorMessage(formatted);
+		// Armazena apenas números e letras (sem máscara) durante a digitação
+		const cleaned = input.value.replace(/[^A-Z\d]/gi, '').toUpperCase();
+		formData.cnpj = cleaned.slice(0, 14);
+		// Limpa erro enquanto digita
+		cnpjError = null;
+	}
+
+	function handleCNPJBlur(e: Event) {
+		const input = e.target as HTMLInputElement;
+		// Aplica formatação apenas ao sair do campo
+		const cleaned = input.value.replace(/[^A-Z\d]/gi, '').toUpperCase();
+		formData.cnpj = formatCNPJInput(cleaned);
+		// Valida no blur quando tem conteúdo
+		if (cleaned.length > 0) {
+			cnpjError = getCNPJErrorMessage(formData.cnpj);
+		}
 	}
 
 	function handleCEPInput(e: Event) {
@@ -91,7 +105,7 @@
 	}
 
 	async function handleBuscarCNPJ() {
-		const cnpjClean = formData.cnpj.replace(/\D/g, '');
+		const cnpjClean = formData.cnpj.replace(/[^A-Z\d]/gi, '').toUpperCase();
 
 		if (cnpjClean.length !== 14) {
 			notifications.warning('CNPJ incompleto', 'Digite os 14 dígitos do CNPJ');
@@ -120,7 +134,7 @@
 					.filter(Boolean)
 					.join(', ');
 				formData.logradouro = parts || formData.logradouro;
-
+				formData.bairro = data.bairro || formData.bairro;
 				formData.cidade = data.cidade || formData.cidade;
 				formData.uf = data.uf || formData.uf;
 				formData.cep = data.cep ? data.cep.replace(/(\d{5})(\d{3})/, '$1-$2') : formData.cep;
@@ -179,7 +193,12 @@
 			const result = await response.json();
 
 			if (!response.ok) {
-				throw new Error(result.error || 'Erro ao salvar cliente');
+				if (response.status === 409 || result.error?.includes('Cliente já existente') || result.error?.includes('já existe')) {
+					notifications.warning('Cliente já existente', 'Este CNPJ já está cadastrado');
+				} else {
+					throw new Error(result.error || 'Erro ao salvar cliente');
+				}
+				return;
 			}
 
 			notifications.success(
@@ -211,9 +230,10 @@
 				id="cnpj"
 				value={formData.cnpj}
 				oninput={handleCNPJInput}
+				onblur={handleCNPJBlur}
 				class="input {cnpjError ? 'input-error' : ''}"
-				placeholder="00.000.000/0000-00"
-				maxlength="18"
+				placeholder="Digite o CNPJ"
+				maxlength="14"
 				required
 			/>
 			{#if cnpjError}
@@ -304,6 +324,17 @@
 					bind:value={formData.logradouro}
 					class="input"
 					placeholder="Rua, número, complemento"
+				/>
+			</div>
+
+			<div class="md:col-span-2">
+				<label for="bairro" class="label">Bairro</label>
+				<input
+					type="text"
+					id="bairro"
+					bind:value={formData.bairro}
+					class="input"
+					placeholder="Bairro"
 				/>
 			</div>
 

@@ -1,31 +1,6 @@
 <script lang="ts">
+	import { notifications } from '$lib/stores/notifications';
 	import { onMount } from 'svelte';
-
-	interface ToastItem {
-		id: number;
-		type: 'success' | 'error' | 'warning' | 'info';
-		title: string;
-		message?: string;
-		duration?: number;
-	}
-
-	let toasts = $state<ToastItem[]>([]);
-	let nextId = 1;
-
-	export function addToast(toast: Omit<ToastItem, 'id'>) {
-		const id = nextId++;
-		const duration = toast.duration ?? 5000;
-
-		toasts = [...toasts, { ...toast, id }];
-
-		if (duration > 0) {
-			setTimeout(() => removeToast(id), duration);
-		}
-	}
-
-	export function removeToast(id: number) {
-		toasts = toasts.filter(t => t.id !== id);
-	}
 
 	const typeStyles = {
 		success: 'border-semantic-success/30 bg-semantic-success/10',
@@ -48,10 +23,16 @@
 			<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
 		</svg>`
 	};
+
+	function removeToast(id: number) {
+		notifications.remove(id);
+	}
+
+	const toasts = $derived($notifications);
 </script>
 
 <!-- Toast Container -->
-<div class="fixed bottom-4 right-4 z-50 flex flex-col gap-3 max-w-sm">
+<div class="fixed top-20 right-4 z-50 flex flex-col gap-3 max-w-sm">
 	{#each toasts as toast (toast.id)}
 		<div
 			class="flex items-start gap-3 p-4 rounded-xl border backdrop-blur-sm animate-slide-in-left

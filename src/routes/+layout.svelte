@@ -5,6 +5,8 @@
 	import Sidebar from '$lib/components/Sidebar.svelte';
 	import Topbar from '$lib/components/Topbar.svelte';
 	import Toast from '$lib/components/ui/Toast.svelte';
+	import Loading from '$lib/components/ui/Loading.svelte';
+	import SearchModal from '$lib/components/SearchModal.svelte';
 
 	let { children, data } = $props();
 
@@ -30,4 +32,6 @@
 	</div>
 {/if}
 
+<SearchModal />
 <Toast />
+<Loading />

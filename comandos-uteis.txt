@@ -1,0 +1,47 @@
+# Comandos Úteis - DOGUP Contábil
+
+## Desenvolvimento
+npm run dev          # Iniciar servidor de desenvolvimento
+npm run build        # Build de produção
+npm run preview      # Preview do build de produção
+npm run check        # Verificar erros TypeScript
+npm run sync         # Sincronizar tipos do SvelteKit
+
+## Prisma (Banco de Dados)
+npx prisma generate                  # Gerar cliente Prisma
+npx prisma studio                    # Abrir interface gráfica do banco
+npx prisma db push                   # Push schema para banco (criar/atualizar tabelas)
+npx prisma migrate dev               # Criar/rodar migrations
+npx prisma migrate deploy            # Aplicar migrations em produção
+
+## Seed (Dados Demo)
+node prisma/seed.cjs                 # Popular banco com dados de demonstração
+
+## Node/npm
+node -e "script"                     # Executar código JavaScript inline
+npm install                          # Instalar dependências
+npm install <package> --save        # Instalar package em produção
+npm install <package> --save-dev     # Instalar package em desenvolvimento
+npm uninstall <package>             # Remover package
+
+## Git
+git status                          # Ver estado do repositório
+git add .                           # Adicionar todos arquivos
+git commit -m "mensagem"            # Criar commit
+git push                            # Enviar para remote
+git pull                            # Baixar do remote
+git branch                          # Listar branches
+git checkout <branch>               # Trocar de branch
+git merge <branch>                   # Mesclar branch
+
+## Variáveis de Ambiente
+DATABASE_URL                        # URL do banco PostgreSQL (Neon)
+SESSION_SECRET                      # Chave secreta para sessões
+
+## Login Demo
+admin@dogup.com.br / admin123       # Usuário Admin (acesso total)
+operador@dogup.com.br / admin123    # Usuário Operador (acesso limitado)
+
+## Acessos
+http://localhost:5173               # Aplicação (desenvolvimento)
+http://localhost:5555               # Prisma Studio (banco de dados)

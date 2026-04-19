@@ -8,6 +8,7 @@ export interface CreateClienteDTO {
 	regime: RegimeTributario;
 	situacaoFiscal?: SituacaoFiscal;
 	logradouro?: string;
+	bairro?: string;
 	cidade?: string;
 	uf?: string;
 	cep?: string;
@@ -22,6 +23,7 @@ export interface UpdateClienteDTO {
 	regime?: RegimeTributario;
 	situacaoFiscal?: SituacaoFiscal;
 	logradouro?: string;
+	bairro?: string;
 	cidade?: string;
 	uf?: string;
 	cep?: string;

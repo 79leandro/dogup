@@ -31,8 +31,8 @@ export interface ReceitaFederalResult {
  */
 export async function fetchCNPJData(cnpj: string): Promise<ReceitaFederalResult> {
 	try {
-		// Remove formatting - only digits
-		const cnpjClean = cnpj.replace(/\D/g, '');
+		// Remove formatting - only digits and uppercase letters
+		const cnpjClean = cnpj.replace(/[^A-Z\d]/gi, '').toUpperCase();
 
 		if (cnpjClean.length !== 14) {
 			return { success: false, error: 'CNPJ deve ter 14 dígitos' };
@@ -55,20 +55,21 @@ export async function fetchCNPJData(cnpj: string): Promise<ReceitaFederalResult>
 		const data = await response.json();
 
 		// Map the API response to our format
+		// BrasilAPI returns flat structure (not nested under estabelecimento)
 		const cnpjData: CNPJData = {
 			cnpj: cnpjClean,
 			nomeRazao: data.razao_social || '',
 			nomeFantasia: data.nome_fantasia || undefined,
-			logradouro: data.estabelecimento?.logradouro || undefined,
-			numero: data.estabelecimento?.numero || undefined,
-			complemento: data.estabelecimento?.complemento || undefined,
-			bairro: data.estabelecimento?.bairro || undefined,
-			cidade: data.estabelecimento?.cidade?.descricao || undefined,
-			uf: data.estabelecimento?.estado?.sigla || undefined,
-			cep: data.estabelecimento?.cep?.replace(/\D/g, '') || undefined,
-			telefone: data.estabelecimento?.telefone1 || undefined,
-			email: data.estabelecimento?.email || undefined,
-			situacaoCadastral: data.estabelecimento?.situacao_cadastral || undefined
+			logradouro: data.logradouro || undefined,
+			numero: data.numero || undefined,
+			complemento: data.complemento || undefined,
+			bairro: data.bairro || undefined,
+			cidade: data.municipio || undefined,
+			uf: data.uf || undefined,
+			cep: data.cep || undefined,
+			telefone: data.ddd_telefone_1 || undefined,
+			email: data.email || undefined,
+			situacaoCadastral: data.descricao_situacao_cadastral || undefined
 		};
 
 		return { success: true, data: cnpjData };

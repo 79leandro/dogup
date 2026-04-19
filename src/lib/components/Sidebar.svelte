@@ -8,6 +8,7 @@
 		icon: string;
 		badge?: number;
 		children?: NavItem[];
+		permission: string; // Add Permission property
 	}
 
 	let { data } = $props();
@@ -16,12 +17,14 @@
 		{
 			label: 'Dashboard',
 			href: '/dashboard',
-			icon: `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>`
+			icon: `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>`,
+			permission: 'MENU_DASHBOARD'
 		},
 		{
 			label: 'Clientes',
 			href: '/dashboard/clientes',
-			icon: `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>`
+			icon: `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>`,
+			permission: 'MENU_CLIENTES'
 		}
 	];
 
@@ -29,13 +32,15 @@
 		{
 			label: 'Obrigações Acessórias',
 			href: '/dashboard/obrigacoes',
-			icon: `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>`
+			icon: `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>`,
+			permission: 'MENU_OBRIGACOES'
 		},
 		{
 			label: 'DCTFWeb em Andamento',
 			href: '/dashboard/obrigacoes/dctfweb',
 			icon: `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`,
-			badge: 36
+			badge: 36,
+			permission: 'MENU_DCTFWEB'
 		}
 	];
 
@@ -43,18 +48,21 @@
 		{
 			label: 'Situação Fiscal Federal',
 			href: '/dashboard/situacao-fiscal',
-			icon: `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>`
+			icon: `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>`,
+			permission: 'MENU_SITUACAO_FISCAL'
 		},
 		{
 			label: 'Certidões Negativas',
 			href: '/dashboard/certidoes',
-			icon: `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>`
+			icon: `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>`,
+			permission: 'MENU_CERTIDOES'
 		},
 		{
 			label: 'Parcelamentos Federais',
 			href: '/dashboard/parcelamentos',
 			icon: `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>`,
-			badge: 2
+			badge: 2,
+			permission: 'MENU_PARCELAMENTOS'
 		}
 	];
 
@@ -63,24 +71,30 @@
 			label: 'Caixa Postal e-CAC',
 			href: '/dashboard/caixa-postal',
 			icon: `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>`,
-			badge: 6
+			badge: 6,
+			permission: 'MENU_CAIXA_POSTAL'
 		},
 		{
 			label: 'Certificados',
 			href: '/dashboard/certificados',
-			icon: `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>`
+			icon: `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>`,
+			permission: 'MENU_CERTIFICADOS'
 		},
 		{
 			label: 'Simples Nacional',
 			href: '/dashboard/simples-nacional',
-			icon: `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`
+			icon: `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`,
+			permission: 'MENU_SIMPLES_NACIONAL'
 		},
 		{
 			label: 'PER/DCOMP',
 			href: '/dashboard/per-dcomp',
-			icon: `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>`
+			icon: `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>`,
+			permission: 'MENU_PER_DCOMP'
 		}
 	];
+
+	import PermissionGate from '$lib/components/ui/PermissionGate.svelte';
 
 	let expandedSections = $state({
 		obrigacoes: true,
@@ -189,23 +203,25 @@
 		<!-- Main -->
 		<div class="space-y-1">
 			{#each mainNav as item}
-				<a
-					href={item.href}
-					class="nav-item {isActive(item.href) ? 'nav-item-active' : ''}
-						{isCollapsed ? 'justify-center px-2' : ''}"
-					title={isCollapsed ? item.label : undefined}
-					aria-label={isCollapsed ? item.label : undefined}
-				>
-					{@html item.icon}
-					{#if !isCollapsed}
-						<span>{item.label}</span>
-					{/if}
-				</a>
+				<PermissionGate role={item.permission} user={data.user}>
+					<a
+						href={item.href}
+						class="nav-item {isActive(item.href) ? 'nav-item-active' : ''}
+							{isCollapsed ? 'justify-center px-2' : ''}"
+						title={isCollapsed ? item.label : undefined}
+						aria-label={isCollapsed ? item.label : undefined}
+					>
+						{@html item.icon}
+						{#if !isCollapsed}
+							<span>{item.label}</span>
+						{/if}
+					</a>
+				</PermissionGate>
 			{/each}
 		</div>
 
 		<!-- Obligations Section -->
-		<div>
+		<PermissionGate role="MENU_GERAL_OBRIGACOES" user={data.user}>
 			<button
 				onclick={() => toggleSection('obrigacoes')}
 				class="flex items-center w-full px-3 py-2 text-sm font-medium text-slate-500 hover:text-slate-700 transition-colors
@@ -228,30 +244,32 @@
 			{#if expandedSections.obrigacoes}
 				<div class="mt-1 space-y-1 {isCollapsed ? 'pl-0' : 'pl-4'}">
 					{#each obligationsNav as item}
-						<a
-							href={item.href}
-							class="nav-item {isActive(item.href) ? 'nav-item-active' : ''}
-								{isCollapsed ? 'justify-center px-2' : ''}"
-							title={isCollapsed ? item.label : undefined}
-							aria-label={isCollapsed ? item.label : undefined}
-						>
-							{@html item.icon}
-							{#if !isCollapsed}
-								<span>{item.label}</span>
-								{#if item.badge}
-									<span class="ml-auto px-2 py-0.5 text-xs font-medium bg-semantic-critical/20 text-semantic-critical rounded-full">
-										{item.badge}
-									</span>
+						<PermissionGate role={item.permission} user={data.user}>
+							<a
+								href={item.href}
+								class="nav-item {isActive(item.href) ? 'nav-item-active' : ''}
+									{isCollapsed ? 'justify-center px-2' : ''}"
+								title={isCollapsed ? item.label : undefined}
+								aria-label={isCollapsed ? item.label : undefined}
+							>
+								{@html item.icon}
+								{#if !isCollapsed}
+									<span>{item.label}</span>
+									{#if item.badge}
+										<span class="ml-auto px-2 py-0.5 text-xs font-medium bg-semantic-critical/20 text-semantic-critical rounded-full">
+											{item.badge}
+										</span>
+									{/if}
 								{/if}
-							{/if}
-						</a>
+							</a>
+						</PermissionGate>
 					{/each}
 				</div>
 			{/if}
-		</div>
+		</PermissionGate>
 
 		<!-- Fiscal Section -->
-		<div>
+		<PermissionGate role="MENU_GERAL_FISCAL" user={data.user}>
 			<button
 				onclick={() => toggleSection('fiscal')}
 				class="flex items-center w-full px-3 py-2 text-sm font-medium text-slate-500 hover:text-slate-700 transition-colors
@@ -274,30 +292,32 @@
 			{#if expandedSections.fiscal}
 				<div class="mt-1 space-y-1 {isCollapsed ? 'pl-0' : 'pl-4'}">
 					{#each fiscalNav as item}
-						<a
-							href={item.href}
-							class="nav-item {isActive(item.href) ? 'nav-item-active' : ''}
-								{isCollapsed ? 'justify-center px-2' : ''}"
-							title={isCollapsed ? item.label : undefined}
-							aria-label={isCollapsed ? item.label : undefined}
-						>
-							{@html item.icon}
-							{#if !isCollapsed}
-								<span>{item.label}</span>
-								{#if item.badge}
-									<span class="ml-auto px-2 py-0.5 text-xs font-medium bg-semantic-warning/20 text-semantic-warning rounded-full">
-										{item.badge}
-									</span>
+						<PermissionGate role={item.permission} user={data.user}>
+							<a
+								href={item.href}
+								class="nav-item {isActive(item.href) ? 'nav-item-active' : ''}
+									{isCollapsed ? 'justify-center px-2' : ''}"
+								title={isCollapsed ? item.label : undefined}
+								aria-label={isCollapsed ? item.label : undefined}
+							>
+								{@html item.icon}
+								{#if !isCollapsed}
+									<span>{item.label}</span>
+									{#if item.badge}
+										<span class="ml-auto px-2 py-0.5 text-xs font-medium bg-semantic-warning/20 text-semantic-warning rounded-full">
+											{item.badge}
+										</span>
+									{/if}
 								{/if}
-							{/if}
-						</a>
+							</a>
+						</PermissionGate>
 					{/each}
 				</div>
 			{/if}
-		</div>
+		</PermissionGate>
 
 		<!-- Tools Section -->
-		<div>
+		<PermissionGate role="MENU_GERAL_FERRAMENTAS" user={data.user}>
 			<button
 				onclick={() => toggleSection('ferramentas')}
 				class="flex items-center w-full px-3 py-2 text-sm font-medium text-slate-500 hover:text-slate-700 transition-colors
@@ -320,27 +340,29 @@
 			{#if expandedSections.ferramentas}
 				<div class="mt-1 space-y-1 {isCollapsed ? 'pl-0' : 'pl-4'}">
 					{#each toolsNav as item}
-						<a
-							href={item.href}
-							class="nav-item {isActive(item.href) ? 'nav-item-active' : ''}
-								{isCollapsed ? 'justify-center px-2' : ''}"
-							title={isCollapsed ? item.label : undefined}
-							aria-label={isCollapsed ? item.label : undefined}
-						>
-							{@html item.icon}
-							{#if !isCollapsed}
-								<span>{item.label}</span>
-								{#if item.badge}
-									<span class="ml-auto px-2 py-0.5 text-xs font-medium bg-semantic-critical/20 text-semantic-critical rounded-full">
-										{item.badge}
-									</span>
+						<PermissionGate role={item.permission} user={data.user}>
+							<a
+								href={item.href}
+								class="nav-item {isActive(item.href) ? 'nav-item-active' : ''}
+									{isCollapsed ? 'justify-center px-2' : ''}"
+								title={isCollapsed ? item.label : undefined}
+								aria-label={isCollapsed ? item.label : undefined}
+							>
+								{@html item.icon}
+								{#if !isCollapsed}
+									<span>{item.label}</span>
+									{#if item.badge}
+										<span class="ml-auto px-2 py-0.5 text-xs font-medium bg-semantic-critical/20 text-semantic-critical rounded-full">
+											{item.badge}
+										</span>
+									{/if}
 								{/if}
-							{/if}
-						</a>
+							</a>
+						</PermissionGate>
 					{/each}
 				</div>
 			{/if}
-		</div>
+		</PermissionGate>
 	</nav>
 
 	<!-- Footer -->
@@ -355,15 +377,17 @@
 					<p class="text-sm font-medium text-slate-800 truncate">{data.user?.nome ?? 'Usuário'}</p>
 					<p class="text-xs text-slate-400 truncate">{data.user?.empresaNome ?? 'Empresa'}</p>
 				</div>
-				<a
-					href="/logout"
-					class="p-1.5 rounded-lg hover:bg-slate-200 text-slate-500 hover:text-slate-700 transition-colors"
-					aria-label="Sair"
-				>
-					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
-					</svg>
-				</a>
+				<form method="POST" action="/logout">
+					<button
+						type="submit"
+						class="p-1.5 rounded-lg hover:bg-slate-200 text-slate-500 hover:text-slate-700 transition-colors"
+						aria-label="Sair"
+					>
+						<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+						</svg>
+					</button>
+				</form>
 			{/if}
 		</div>
 	</div>

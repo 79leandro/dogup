@@ -203,11 +203,24 @@ export function formatCNPJInput(value: string): string {
 	// Aceita apenas letras (A-Z), números e máscara
 	const cleaned = value.toUpperCase().replace(/[^A-Z\d./-]/g, '');
 
-	if (cleaned.length <= 2) return cleaned;
-	if (cleaned.length <= 5) return `${cleaned.slice(0, 2)}.${cleaned.slice(2)}`;
-	if (cleaned.length <= 8) return `${cleaned.slice(0, 2)}.${cleaned.slice(2, 5)}.${cleaned.slice(5)}`;
-	if (cleaned.length <= 12) return `${cleaned.slice(0, 2)}.${cleaned.slice(2, 5)}.${cleaned.slice(5, 8)}/${cleaned.slice(8)}`;
-	return `${cleaned.slice(0, 2)}.${cleaned.slice(2, 5)}.${cleaned.slice(5, 8)}/${cleaned.slice(8, 12)}-${cleaned.slice(12, 14)}`;
+	// Se ainda está digitando (menos de 14 caracteres), retorna sem formatação parcial
+	// para não interferir na digitação
+	if (cleaned.length < 14) {
+		return cleaned;
+	}
+
+	// Aplica máscara apenas quando tiver 14 caracteres completos
+	if (cleaned.length === 14) {
+		const isAlfanumerico = /[A-Z]/.test(cleaned.substring(0, 12));
+		if (isAlfanumerico) {
+			return `${cleaned.slice(0, 2)}.${cleaned.slice(2, 5)}.${cleaned.slice(5, 8)}/${cleaned.slice(8, 12)}-${cleaned.slice(12)}`;
+		} else {
+			return `${cleaned.slice(0, 2)}.${cleaned.slice(2, 5)}.${cleaned.slice(5, 8)}/${cleaned.slice(8, 12)}-${cleaned.slice(12)}`;
+		}
+	}
+
+	// Se tiver mais de 14, limita
+	return cleaned.slice(0, 14);
 }
 
 /**

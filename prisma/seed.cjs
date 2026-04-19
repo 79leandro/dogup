@@ -2,9 +2,14 @@
 // Run with: node prisma/seed.js
 
 const { PrismaClient } = require('@prisma/client');
+const { PrismaPg } = require('@prisma/adapter-pg');
+const { Pool } = require('pg');
 const bcrypt = require('bcryptjs');
+require('dotenv/config');
 
-const prisma = new PrismaClient();
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const adapter = new PrismaPg(pool);
+const prisma = new PrismaClient({ adapter });
 
 async function main() {
 	console.log('🌱 Starting database seed...');
@@ -20,6 +25,49 @@ async function main() {
 	});
 	console.log(`✅ Empresa created: ${empresa.nome}`);
 
+	// Create Perfis and Permissoes
+	const permKeys = [
+		'MENU_DASHBOARD', 'MENU_CLIENTES', 'MENU_OBRIGACOES', 'MENU_DCTFWEB', 
+		'MENU_SITUACAO_FISCAL', 'MENU_CERTIDOES', 'MENU_PARCELAMENTOS', 
+		'MENU_CAIXA_POSTAL', 'MENU_CERTIFICADOS', 'MENU_SIMPLES_NACIONAL', 
+		'MENU_PER_DCOMP', 'MENU_GERAL_FERRAMENTAS', 'MENU_GERAL_FISCAL', 'MENU_GERAL_OBRIGACOES'
+	];
+
+	for (const codigo of permKeys) {
+		await prisma.permissao.upsert({
+			where: { codigo },
+			update: {},
+			create: { codigo, descricao: `Acesso a ${codigo}` }
+		});
+	}
+
+	const allPerms = await prisma.permissao.findMany();
+
+	const perfilAdmin = await prisma.perfil.upsert({
+		where: { nome_empresaId: { nome: 'ADMIN', empresaId: empresa.id } },
+		update: { isAdmin: true },
+		create: {
+			nome: 'ADMIN',
+			isAdmin: true,
+			empresaId: empresa.id
+		}
+	});
+	console.log(`✅ Perfil ADMIN created`);
+
+	const perfilOperador = await prisma.perfil.upsert({
+		where: { nome_empresaId: { nome: 'OPERADOR', empresaId: empresa.id } },
+		update: {},
+		create: {
+			nome: 'OPERADOR',
+			isAdmin: false,
+			empresaId: empresa.id,
+			permissoes: {
+				connect: allPerms.slice(0, 3).map(p => ({ id: p.id })) // Apenas algumas permissoes demo
+			}
+		}
+	});
+	console.log(`✅ Perfil OPERADOR created`);
+
 	// Create demo user
 	const hashedPassword = await bcrypt.hash('admin123', 10);
 	const usuario = await prisma.usuario.upsert({
@@ -30,10 +78,25 @@ async function main() {
 			senha: hashedPassword,
 			nome: 'Administrador',
 			cargo: 'Gerente',
-			empresaId: empresa.id
+			empresaId: empresa.id,
+			perfilId: perfilAdmin.id
 		}
 	});
-	console.log(`✅ User created: ${usuario.email}`);
+	console.log(`✅ User Admin created: ${usuario.email}`);
+
+	const operador = await prisma.usuario.upsert({
+		where: { email: 'operador@dogup.com.br' },
+		update: { perfilId: perfilOperador.id },
+		create: {
+			email: 'operador@dogup.com.br',
+			senha: hashedPassword,
+			nome: 'Operador de Teste',
+			cargo: 'Assistente',
+			empresaId: empresa.id,
+			perfilId: perfilOperador.id
+		}
+	});
+	console.log(`✅ User Operador created: ${operador.email}`);
 
 	// Create demo clientes
 	const clientes = [
@@ -212,8 +275,8 @@ async function main() {
 
 	console.log('\n🎉 Seed completed successfully!');
 	console.log('\n📋 Login credentials:');
-	console.log('   Email: admin@dogup.com.br');
-	console.log('   Senha: admin123');
+	console.log('   Admin: admin@dogup.com.br / admin123');
+	console.log('   Operador: operador@dogup.com.br / admin123');
 }
 
 main()
