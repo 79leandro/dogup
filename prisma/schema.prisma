@@ -280,3 +280,32 @@ model Permissao {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
+
+// ============================================
+// AUDITORIA - Audit Trail
+// ============================================
+model Auditoria {
+  id           String         @id @default(cuid())
+  usuarioId    String
+  usuarioNome  String
+  empresaId    String
+  acao         EnumAuditoria
+  entidade     String
+  entidadeId   String
+  dadosAntigos Json?
+  dadosNovos   Json?
+  ipAddress    String?
+  userAgent    String?
+  createdAt    DateTime       @default(now())
+
+  @@index([empresaId, createdAt])
+  @@index([entidade, entidadeId])
+  @@index([usuarioId])
+  @@index([acao])
+}
+
+enum EnumAuditoria {
+  CREATE
+  UPDATE
+  DELETE
+}

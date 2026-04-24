@@ -1,5 +1,9 @@
 import { getPrisma } from '$lib/server/prisma';
 import type { TipoObrigacao, StatusObrigacao } from '@prisma/client';
+import { registrarAuditoria } from './auditoriaService';
+import type { AuditUser } from './clienteService';
+
+export { type AuditUser } from './clienteService';
 
 export interface CreateObrigacaoDTO {
 	clienteId: string;
@@ -90,9 +94,16 @@ export async function getObrigacaoStats(empresaId: string) {
 	};
 }
 
-export async function createObrigacao(data: CreateObrigacaoDTO) {
+export async function createObrigacao(
+	data: CreateObrigacaoDTO,
+	empresaId: string,
+	user: AuditUser,
+	ipAddress?: string | null,
+	userAgent?: string | null
+) {
 	const prisma = getPrisma();
-	return prisma.obrigacao.create({
+
+	const result = await prisma.obrigacao.create({
 		data: {
 			...data,
 			status: data.status || 'NAO_ENTREGUE'
@@ -107,21 +118,57 @@ export async function createObrigacao(data: CreateObrigacaoDTO) {
 			}
 		}
 	});
+
+	await registrarAuditoria({
+		usuarioId: user.id,
+		usuarioNome: user.nome,
+		empresaId,
+		acao: 'CREATE',
+		entidade: 'Obrigacao',
+		entidadeId: result.id,
+		dadosNovos: result,
+		ipAddress,
+		userAgent
+	});
+
+	return result;
 }
 
 export async function updateObrigacaoStatus(
 	id: string,
+	empresaId: string,
 	status: StatusObrigacao,
-	reciboUrl?: string
+	reciboUrl: string | undefined,
+	user: AuditUser,
+	ipAddress?: string | null,
+	userAgent?: string | null
 ) {
 	const prisma = getPrisma();
-	return prisma.obrigacao.update({
+
+	const dadosAntigos = await prisma.obrigacao.findUnique({ where: { id } });
+
+	const result = await prisma.obrigacao.update({
 		where: { id },
 		data: {
 			status,
 			...(reciboUrl && { reciboUrl })
 		}
 	});
+
+	await registrarAuditoria({
+		usuarioId: user.id,
+		usuarioNome: user.nome,
+		empresaId,
+		acao: 'UPDATE',
+		entidade: 'Obrigacao',
+		entidadeId: id,
+		dadosAntigos,
+		dadosNovos: result,
+		ipAddress,
+		userAgent
+	});
+
+	return result;
 }
 
 export async function simulateDCTFWebTransmission(

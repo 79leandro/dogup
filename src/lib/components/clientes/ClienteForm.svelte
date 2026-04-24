@@ -13,16 +13,16 @@
 			id?: string;
 			cnpj: string;
 			nomeRazao: string;
-			nomeFantasia?: string;
+			nomeFantasia?: string | null;
 			regime: string;
 			situacaoFiscal: string;
-			logradouro?: string;
-			cidade?: string;
-			uf?: string;
-			cep?: string;
-			email?: string;
-			telefone?: string;
-			responsavelTecnico?: string;
+			logradouro?: string | null;
+			cidade?: string | null;
+			uf?: string | null;
+			cep?: string | null;
+			email?: string | null;
+			telefone?: string | null;
+			responsavelTecnico?: string | null;
 		};
 		onSave?: (cliente: any) => void;
 		onCancel?: () => void;
@@ -54,7 +54,7 @@
 	$effect(() => {
 		if (cliente) {
 			formData = {
-				cnpj: cliente.cnpj || '',
+				cnpj: formatCNPJInput(cliente.cnpj || ''),
 				nomeRazao: cliente.nomeRazao || '',
 				nomeFantasia: cliente.nomeFantasia || '',
 				regime: cliente.regime || 'SIMPLES_NACIONAL',
@@ -168,12 +168,16 @@
 	async function handleSubmit(e: Event) {
 		e.preventDefault();
 
-		if (!validateCNPJWithError(formData.cnpj)) {
+		// Always send clean CNPJ to API (without formatting)
+		const cleanCNPJ = formData.cnpj.replace(/[^A-Z\d]/gi, '').toUpperCase();
+		const submitData = { ...formData, cnpj: cleanCNPJ };
+
+		if (!validateCNPJ(cleanCNPJ)) {
 			notifications.error('CNPJ inválido', cnpjError || 'Verifique o formato do CNPJ');
 			return;
 		}
 
-		if (!formData.nomeRazao.trim()) {
+		if (!submitData.nomeRazao.trim()) {
 			notifications.error('Razão Social é obrigatória');
 			return;
 		}
@@ -187,7 +191,7 @@
 			const response = await fetch(url, {
 				method,
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify(formData)
+				body: JSON.stringify(submitData)
 			});
 
 			const result = await response.json();

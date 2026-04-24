@@ -76,10 +76,19 @@ export const POST: RequestHandler = async (event) => {
 			return json({ error: 'Cliente já existente' }, { status: 409 });
 		}
 
-		const cliente = await createCliente(user.empresaId, {
-			...data,
-			cnpj: cnpjClean
-		});
+		const ipAddress = event.request.headers.get('x-forwarded-for')?.split(',')[0]?.trim();
+		const userAgent = event.request.headers.get('user-agent');
+
+		const cliente = await createCliente(
+			user.empresaId,
+			{
+				...data,
+				cnpj: cnpjClean
+			},
+			{ id: user.id, nome: user.nome },
+			ipAddress,
+			userAgent
+		);
 
 		return json({ cliente }, { status: 201 });
 	} catch (error) {

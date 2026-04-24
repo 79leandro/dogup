@@ -50,7 +50,17 @@ export const PUT: RequestHandler = async (event) => {
 			data.cnpj = cnpjClean;
 		}
 
-		const cliente = await updateCliente(id, user.empresaId, data);
+		const ipAddress = event.request.headers.get('x-forwarded-for')?.split(',')[0]?.trim();
+		const userAgent = event.request.headers.get('user-agent');
+
+		const cliente = await updateCliente(
+			id,
+			user.empresaId,
+			data,
+			{ id: user.id, nome: user.nome },
+			ipAddress,
+			userAgent
+		);
 
 		return json({ cliente });
 	} catch (error) {
@@ -74,7 +84,16 @@ export const DELETE: RequestHandler = async (event) => {
 			return json({ error: 'Cliente não encontrado' }, { status: 404 });
 		}
 
-		await deleteCliente(id, user.empresaId);
+		const ipAddress = event.request.headers.get('x-forwarded-for')?.split(',')[0]?.trim();
+		const userAgent = event.request.headers.get('user-agent');
+
+		await deleteCliente(
+			id,
+			user.empresaId,
+			{ id: user.id, nome: user.nome },
+			ipAddress,
+			userAgent
+		);
 
 		return json({ success: true });
 	} catch (error) {

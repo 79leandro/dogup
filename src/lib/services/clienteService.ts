@@ -1,5 +1,11 @@
 import { getPrisma } from '$lib/server/prisma';
 import type { RegimeTributario, SituacaoFiscal } from '@prisma/client';
+import { registrarAuditoria } from './auditoriaService';
+
+export interface AuditUser {
+	id: string;
+	nome: string;
+}
 
 export interface CreateClienteDTO {
 	cnpj: string;
@@ -91,13 +97,15 @@ export async function getCliente(id: string, empresaId: string): Promise<Cliente
 
 export async function createCliente(
 	empresaId: string,
-	data: CreateClienteDTO
+	data: CreateClienteDTO,
+	user: AuditUser,
+	ipAddress?: string | null,
+	userAgent?: string | null
 ): Promise<ClienteWithRelations> {
 	const prisma = getPrisma();
-	// Remove leading zeros and format CNPJ
 	const formattedCnpj = data.cnpj.replace(/\D/g, '');
 
-	return prisma.cliente.create({
+	const result = await prisma.cliente.create({
 		data: {
 			...data,
 			cnpj: formattedCnpj,
@@ -114,15 +122,35 @@ export async function createCliente(
 			}
 		}
 	});
+
+	await registrarAuditoria({
+		usuarioId: user.id,
+		usuarioNome: user.nome,
+		empresaId,
+		acao: 'CREATE',
+		entidade: 'Cliente',
+		entidadeId: result.id,
+		dadosNovos: result,
+		ipAddress,
+		userAgent
+	});
+
+	return result;
 }
 
 export async function updateCliente(
 	id: string,
 	empresaId: string,
-	data: UpdateClienteDTO
+	data: UpdateClienteDTO,
+	user: AuditUser,
+	ipAddress?: string | null,
+	userAgent?: string | null
 ): Promise<ClienteWithRelations> {
 	const prisma = getPrisma();
-	return prisma.cliente.update({
+
+	const dadosAntigos = await prisma.cliente.findUnique({ where: { id } });
+
+	const result = await prisma.cliente.update({
 		where: { id },
 		data,
 		include: {
@@ -135,12 +163,48 @@ export async function updateCliente(
 			}
 		}
 	});
+
+	await registrarAuditoria({
+		usuarioId: user.id,
+		usuarioNome: user.nome,
+		empresaId,
+		acao: 'UPDATE',
+		entidade: 'Cliente',
+		entidadeId: id,
+		dadosAntigos,
+		dadosNovos: result,
+		ipAddress,
+		userAgent
+	});
+
+	return result;
 }
 
-export async function deleteCliente(id: string, empresaId: string): Promise<void> {
+export async function deleteCliente(
+	id: string,
+	empresaId: string,
+	user: AuditUser,
+	ipAddress?: string | null,
+	userAgent?: string | null
+): Promise<void> {
 	const prisma = getPrisma();
+
+	const dadosAntigos = await prisma.cliente.findUnique({ where: { id } });
+
 	await prisma.cliente.delete({
 		where: { id, empresaId }
+	});
+
+	await registrarAuditoria({
+		usuarioId: user.id,
+		usuarioNome: user.nome,
+		empresaId,
+		acao: 'DELETE',
+		entidade: 'Cliente',
+		entidadeId: id,
+		dadosAntigos,
+		ipAddress,
+		userAgent
 	});
 }
 

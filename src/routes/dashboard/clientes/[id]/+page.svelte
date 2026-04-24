@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import { notifications } from '$lib/stores/notifications';
+	import ClienteForm from '$lib/components/clientes/ClienteForm.svelte';
 
 	interface Cliente {
 		id: string;
@@ -316,6 +317,26 @@
 				</div>
 			</div>
 		</div>
+
+		<!-- Edit Form (shown when isEditing is true) -->
+		{#if isEditing}
+			<div class="card p-6">
+				<h2 class="font-semibold text-slate-800 mb-4 flex items-center gap-2">
+					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+					</svg>
+					Editar Cliente
+				</h2>
+				<ClienteForm
+					{cliente}
+					onSave={() => {
+						isEditing = false;
+						fetchCliente();
+					}}
+					onCancel={() => isEditing = false}
+				/>
+			</div>
+		{/if}
 	{:else}
 		<div class="text-center py-12">
 			<p class="text-slate-400">Cliente não encontrado</p>

@@ -46,6 +46,8 @@ export const POST: RequestHandler = async (event) => {
 		}
 
 		const data = await event.request.json();
+		const ipAddress = event.request.headers.get('x-forwarded-for')?.split(',')[0]?.trim();
+		const userAgent = event.request.headers.get('user-agent');
 
 		// Check if this is a DCTFWeb transmission simulation
 		if (data.action === 'transmitirDCTFWeb') {
@@ -61,16 +63,22 @@ export const POST: RequestHandler = async (event) => {
 			});
 
 			// Create obligation with status based on simulation result
-			const obrigacao = await createObrigacao({
-				clienteId: data.clienteId,
-				tipo: 'DCTFWEB',
-				ano: data.ano,
-				mes: data.mes,
-				status: resultado.status === 'entregue' ? 'ENTREGUE' : 'EM_PROCESSAMENTO',
-				observacao: resultado.protocolo
-					? `Protocolo: ${resultado.protocolo}`
-					: resultado.erro
-			});
+			const obrigacao = await createObrigacao(
+				{
+					clienteId: data.clienteId,
+					tipo: 'DCTFWEB',
+					ano: data.ano,
+					mes: data.mes,
+					status: resultado.status === 'entregue' ? 'ENTREGUE' : 'EM_PROCESSAMENTO',
+					observacao: resultado.protocolo
+						? `Protocolo: ${resultado.protocolo}`
+						: resultado.erro
+				},
+				user.empresaId,
+				{ id: user.id, nome: user.nome },
+				ipAddress,
+				userAgent
+			);
 
 			return json({ obrigacao, resultado });
 		}
@@ -83,14 +91,20 @@ export const POST: RequestHandler = async (event) => {
 			);
 		}
 
-		const obrigacao = await createObrigacao({
-			clienteId: data.clienteId,
-			tipo: data.tipo,
-			ano: data.ano,
-			mes: data.mes,
-			status: data.status,
-			observacao: data.observacao
-		});
+		const obrigacao = await createObrigacao(
+			{
+				clienteId: data.clienteId,
+				tipo: data.tipo,
+				ano: data.ano,
+				mes: data.mes,
+				status: data.status,
+				observacao: data.observacao
+			},
+			user.empresaId,
+			{ id: user.id, nome: user.nome },
+			ipAddress,
+			userAgent
+		);
 
 		return json({ obrigacao }, { status: 201 });
 	} catch (error) {
