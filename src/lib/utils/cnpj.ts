@@ -1,6 +1,6 @@
 /**
- * CNPJ Validation and Formatting Utilities
- * Supports both traditional numeric CNPJ (14 digits) and new alphanumeric CNPJ format
+ * CNPJ/CPF Validation and Formatting Utilities
+ * Supports CPF (11 digits), traditional numeric CNPJ (14 digits) and new alphanumeric CNPJ format
  *
  * New alphanumeric format (from July 2026):
  * - 12 base characters (A-Z, 0-9) + 2 numeric check digits = 14 total
@@ -12,12 +12,17 @@
 
 const TAMANHO_CNPJ_SEM_DV = 12;
 const TAMANHO_CNPJ = 14;
+const TAMANHO_CPF = 11;
 
 // Regex patterns
 const REGEX_CNPJ_SEM_DV = /^([A-Z\d]){12}$/;
 const REGEX_CNPJ_COMPLETO = /^([A-Z\d]){12}(\d){2}$/;
-const REGEX_MASCARA = /[./-]/g;
-const REGEX_CARACTERES_NAO_PERMITIDOS = /[^A-Z\d./-]/i;
+const REGEX_CPF_COMPLETO = /^\d{11}$/;
+const REGEX_MASCARA_CNPJ = /[./-]/g;
+const REGEX_MASCARA_CPF = /[.-]/g;
+const REGEX_CARACTERES_NAO_PERMITIDOS_CNPJ = /[^A-Z\d./-]/i;
+const REGEX_CARACTERES_NAO_PERMITIDOS_CPF = /[^0-9.-]/i;
+const CPF_ZERADO = '00000000000';
 
 // Pesos para cálculo do DV (alfanumérico)
 // Posições: 5,4,3,2,9,8,7,6,5,4,3,2,1 (da direita para esquerda)
@@ -29,7 +34,14 @@ const CNPJ_ZERADO = '00000000000000';
  * Remove máscara do CNPJ (pontos, barra, hífen)
  */
 export function removeMascaraCNPJ(cnpj: string): string {
-	return cnpj.replace(REGEX_MASCARA, '');
+	return cnpj.replace(REGEX_MASCARA_CNPJ, '');
+}
+
+/**
+ * Remove máscara do CPF (ponto, hífen)
+ */
+export function removeMascaraCPF(cpf: string): string {
+	return cpf.replace(REGEX_MASCARA_CPF, '');
 }
 
 /**
@@ -63,7 +75,7 @@ export function charParaValor(char: string): number {
 export function calculaDV(cnpjSemDV: string): string {
 	const cnpj = removeMascaraCNPJ(cnpjSemDV).toUpperCase();
 
-	if (!REGEX_CARACTERES_NAO_PERMITIDOS.test(cnpj)) {
+	if (!REGEX_CARACTERES_NAO_PERMITIDOS_CNPJ.test(cnpj)) {
 		if (REGEX_CNPJ_SEM_DV.test(cnpj) && cnpj !== CNPJ_ZERADO.substring(0, TAMANHO_CNPJ_SEM_DV)) {
 			let somatorioDV1 = 0;
 			let somatorioDV2 = 0;
@@ -85,6 +97,41 @@ export function calculaDV(cnpjSemDV: string): string {
 }
 
 /**
+ * Valida CPF (11 dígitos)
+ */
+export function validateCPF(cpf: string): boolean {
+	const cleaned = cpf.replace(/\D/g, '');
+
+	if (!REGEX_CPF_COMPLETO.test(cleaned)) {
+		return false;
+	}
+
+	if (cleaned === CPF_ZERADO) {
+		return false;
+	}
+
+	// Validação do primeiro dígito verificador
+	let soma = 0;
+	for (let i = 0; i < 9; i++) {
+		soma += parseInt(cleaned[i]) * (10 - i);
+	}
+	let dv1 = soma % 11;
+	dv1 = dv1 < 2 ? 0 : 11 - dv1;
+
+	if (parseInt(cleaned[9]) !== dv1) return false;
+
+	// Validação do segundo dígito verificador
+	soma = 0;
+	for (let i = 0; i < 10; i++) {
+		soma += parseInt(cleaned[i]) * (11 - i);
+	}
+	let dv2 = soma % 11;
+	dv2 = dv2 < 2 ? 0 : 11 - dv2;
+
+	return parseInt(cleaned[10]) === dv2;
+}
+
+/**
  * Valida CNPJ (suporta ambos os formatos: numérico tradicional e alfanumérico)
  *
  * Formato numérico tradicional: 14 dígitos
@@ -97,7 +144,7 @@ export function validateCNPJ(cnpj: string): boolean {
 	const cleaned = removeMascaraCNPJ(cnpj).toUpperCase();
 
 	// Verifica caracteres não permitidos
-	if (REGEX_CARACTERES_NAO_PERMITIDOS.test(cleaned)) {
+	if (REGEX_CARACTERES_NAO_PERMITIDOS_CNPJ.test(cleaned)) {
 		return false;
 	}
 
@@ -189,6 +236,35 @@ export function formatCNPJ(cnpj: string): string {
 }
 
 /**
+ * Formata CPF para exibição (XXX.XXX.XXX-XX)
+ */
+export function formatCPF(cpf: string): string {
+	const cleaned = cpf.replace(/\D/g, '');
+
+	if (cleaned.length !== TAMANHO_CPF) {
+		return cpf;
+	}
+
+	return `${cleaned.slice(0, 3)}.${cleaned.slice(3, 6)}.${cleaned.slice(6, 9)}-${cleaned.slice(9)}`;
+}
+
+/**
+ * Formata documento (CPF ou CNPJ) para exibição
+ * Detecta automaticamente o tipo pelo comprimento
+ */
+export function formatDocumento(documento: string): string {
+	const cleaned = documento.replace(/\D/g, '');
+
+	if (cleaned.length === TAMANHO_CPF) {
+		return formatCPF(cleaned);
+	} else if (cleaned.length === TAMANHO_CNPJ) {
+		return formatCNPJ(cleaned);
+	}
+
+	return documento;
+}
+
+/**
  * Formata CNPJ durante digitação (mascaramento automático)
  * Suporta tanto números quanto letras
  *
@@ -224,6 +300,23 @@ export function formatCNPJInput(value: string): string {
 }
 
 /**
+ * Formata CPF durante digitação (mascaramento automático)
+ */
+export function formatCPFInput(value: string): string {
+	const cleaned = value.replace(/\D/g, '');
+
+	if (cleaned.length < 11) {
+		return cleaned;
+	}
+
+	if (cleaned.length === 11) {
+		return `${cleaned.slice(0, 3)}.${cleaned.slice(3, 6)}.${cleaned.slice(6, 9)}-${cleaned.slice(9)}`;
+	}
+
+	return cleaned.slice(0, 11);
+}
+
+/**
  * Retorna mensagem de erro para CNPJ inválido
  */
 export function getCNPJErrorMessage(cnpj: string): string | null {
@@ -233,7 +326,7 @@ export function getCNPJErrorMessage(cnpj: string): string | null {
 		return 'CNPJ é obrigatório';
 	}
 
-	if (REGEX_CARACTERES_NAO_PERMITIDOS.test(cleaned)) {
+	if (REGEX_CARACTERES_NAO_PERMITIDOS_CNPJ.test(cleaned)) {
 		return 'CNPJ contém caracteres inválidos';
 	}
 
@@ -259,9 +352,43 @@ export function getCNPJErrorMessage(cnpj: string): string | null {
 }
 
 /**
+ * Retorna mensagem de erro para CPF inválido
+ */
+export function getCPFErrorMessage(cpf: string): string | null {
+	const cleaned = cpf.replace(/\D/g, '');
+
+	if (!cleaned) {
+		return 'CPF é obrigatório';
+	}
+
+	if (cleaned.length < TAMANHO_CPF) {
+		return 'CPF está incompleto';
+	}
+
+	if (cleaned.length > TAMANHO_CPF) {
+		return 'CPF tem caracteres excedentes';
+	}
+
+	if (cleaned === CPF_ZERADO) {
+		return 'CPF não pode ser zero';
+	}
+
+	if (!validateCPF(cleaned)) {
+		return 'Dígitos verificadores inválidos';
+	}
+
+	return null;
+}
+
+/**
  * Exemplo de CNPJs válidos para teste
  */
 export const CNPJ_EXAMPLES = {
 	alfanumerico: ['12.ABC.345/01DE-35', '90.021.382/0001-22', 'R55231B3000700', '44.108.058/0001-29', 'ABCDEFGHIJKL80'],
 	numerico: ['00.000.000/0000-00', '12.345.678/0001-90', '90.024.778/0001-23']
 };
+
+/**
+ * Exemplo de CPFs válidos para teste
+ */
+export const CPF_EXAMPLES = ['123.456.789-00', '000.000.001-91'];

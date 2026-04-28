@@ -1,5 +1,5 @@
 import { getPrisma } from '$lib/server/prisma';
-import type { RegimeTributario, SituacaoFiscal } from '@prisma/client';
+import type { RegimeTributario, SituacaoFiscal, TipoPessoa } from '@prisma/client';
 import { registrarAuditoria } from './auditoriaService';
 
 export interface AuditUser {
@@ -7,10 +7,13 @@ export interface AuditUser {
 	nome: string;
 }
 
-export interface CreateClienteDTO {
-	cnpj: string;
+export interface CreateClienteFinalDTO {
+	tipoPessoa: TipoPessoa;
+	documento: string;
 	nomeRazao: string;
 	nomeFantasia?: string;
+	estadoCivil?: string;
+	inscricaoEstadual?: string;
 	regime: RegimeTributario;
 	situacaoFiscal?: SituacaoFiscal;
 	logradouro?: string;
@@ -23,9 +26,13 @@ export interface CreateClienteDTO {
 	responsavelTecnico?: string;
 }
 
-export interface UpdateClienteDTO {
+export interface UpdateClienteFinalDTO {
+	tipoPessoa?: TipoPessoa;
+	documento?: string;
 	nomeRazao?: string;
 	nomeFantasia?: string;
+	estadoCivil?: string;
+	inscricaoEstadual?: string;
 	regime?: RegimeTributario;
 	situacaoFiscal?: SituacaoFiscal;
 	logradouro?: string;
@@ -38,11 +45,13 @@ export interface UpdateClienteDTO {
 	responsavelTecnico?: string;
 }
 
-export interface ClienteWithRelations {
+export interface ClienteFinalWithRelations {
 	id: string;
-	cnpj: string;
+	tipoPessoa: TipoPessoa;
+	documento: string;
 	nomeRazao: string;
 	nomeFantasia: string | null;
+	estadoCivil: string | null;
 	regime: RegimeTributario;
 	situacaoFiscal: SituacaoFiscal;
 	logradouro?: string | null;
@@ -52,7 +61,7 @@ export interface ClienteWithRelations {
 	email?: string | null;
 	telefone?: string | null;
 	responsavelTecnico?: string | null;
-	empresaId: string;
+	contadorId: string;
 	createdAt: Date;
 	updatedAt: Date;
 	_count?: {
@@ -62,10 +71,10 @@ export interface ClienteWithRelations {
 	};
 }
 
-export async function listClientes(empresaId: string): Promise<ClienteWithRelations[]> {
+export async function listClientes(contadorId: string): Promise<ClienteFinalWithRelations[]> {
 	const prisma = getPrisma();
-	return prisma.cliente.findMany({
-		where: { empresaId },
+	return prisma.clienteFinal.findMany({
+		where: { contadorId },
 		orderBy: { nomeRazao: 'asc' },
 		include: {
 			_count: {
@@ -79,10 +88,10 @@ export async function listClientes(empresaId: string): Promise<ClienteWithRelati
 	});
 }
 
-export async function getCliente(id: string, empresaId: string): Promise<ClienteWithRelations | null> {
+export async function getCliente(id: string, contadorId: string): Promise<ClienteFinalWithRelations | null> {
 	const prisma = getPrisma();
-	return prisma.cliente.findFirst({
-		where: { id, empresaId },
+	return prisma.clienteFinal.findFirst({
+		where: { id, contadorId },
 		include: {
 			_count: {
 				select: {
@@ -96,21 +105,34 @@ export async function getCliente(id: string, empresaId: string): Promise<Cliente
 }
 
 export async function createCliente(
-	empresaId: string,
-	data: CreateClienteDTO,
+	contadorId: string,
+	data: CreateClienteFinalDTO,
 	user: AuditUser,
 	ipAddress?: string | null,
 	userAgent?: string | null
-): Promise<ClienteWithRelations> {
+): Promise<ClienteFinalWithRelations> {
 	const prisma = getPrisma();
-	const formattedCnpj = data.cnpj.replace(/\D/g, '');
+	const formattedDocumento = data.documento.replace(/\D/g, '');
 
-	const result = await prisma.cliente.create({
+	const result = await prisma.clienteFinal.create({
 		data: {
-			...data,
-			cnpj: formattedCnpj,
+			tipoPessoa: data.tipoPessoa,
+			documento: formattedDocumento,
+			nomeRazao: data.nomeRazao,
+			nomeFantasia: data.nomeFantasia,
+			estadoCivil: data.estadoCivil,
+			inscricaoEstadual: data.inscricaoEstadual,
+			regime: data.regime,
 			situacaoFiscal: data.situacaoFiscal || 'REGULAR',
-			empresaId
+			logradouro: data.logradouro,
+			bairro: data.bairro,
+			cidade: data.cidade,
+			uf: data.uf,
+			cep: data.cep,
+			email: data.email,
+			telefone: data.telefone,
+			responsavelTecnico: data.responsavelTecnico,
+			contadorId
 		},
 		include: {
 			_count: {
@@ -126,9 +148,9 @@ export async function createCliente(
 	await registrarAuditoria({
 		usuarioId: user.id,
 		usuarioNome: user.nome,
-		empresaId,
+		contadorId,
 		acao: 'CREATE',
-		entidade: 'Cliente',
+		entidade: 'ClienteFinal',
 		entidadeId: result.id,
 		dadosNovos: result,
 		ipAddress,
@@ -140,18 +162,22 @@ export async function createCliente(
 
 export async function updateCliente(
 	id: string,
-	empresaId: string,
-	data: UpdateClienteDTO,
+	contadorId: string,
+	data: UpdateClienteFinalDTO,
 	user: AuditUser,
 	ipAddress?: string | null,
 	userAgent?: string | null
-): Promise<ClienteWithRelations> {
+): Promise<ClienteFinalWithRelations> {
 	const prisma = getPrisma();
 
-	const dadosAntigos = await prisma.cliente.findUnique({ where: { id } });
+	const dadosAntigos = await prisma.clienteFinal.findUnique({ where: { id, contadorId } });
 
-	const result = await prisma.cliente.update({
-		where: { id },
+	if (!dadosAntigos) {
+		throw new Error('Cliente não encontrado');
+	}
+
+	const result = await prisma.clienteFinal.update({
+		where: { id, contadorId },
 		data,
 		include: {
 			_count: {
@@ -167,9 +193,9 @@ export async function updateCliente(
 	await registrarAuditoria({
 		usuarioId: user.id,
 		usuarioNome: user.nome,
-		empresaId,
+		contadorId,
 		acao: 'UPDATE',
-		entidade: 'Cliente',
+		entidade: 'ClienteFinal',
 		entidadeId: id,
 		dadosAntigos,
 		dadosNovos: result,
@@ -182,25 +208,25 @@ export async function updateCliente(
 
 export async function deleteCliente(
 	id: string,
-	empresaId: string,
+	contadorId: string,
 	user: AuditUser,
 	ipAddress?: string | null,
 	userAgent?: string | null
 ): Promise<void> {
 	const prisma = getPrisma();
 
-	const dadosAntigos = await prisma.cliente.findUnique({ where: { id } });
+	const dadosAntigos = await prisma.clienteFinal.findUnique({ where: { id, contadorId } });
 
-	await prisma.cliente.delete({
-		where: { id, empresaId }
+	await prisma.clienteFinal.delete({
+		where: { id, contadorId }
 	});
 
 	await registrarAuditoria({
 		usuarioId: user.id,
 		usuarioNome: user.nome,
-		empresaId,
+		contadorId,
 		acao: 'DELETE',
-		entidade: 'Cliente',
+		entidade: 'ClienteFinal',
 		entidadeId: id,
 		dadosAntigos,
 		ipAddress,
@@ -209,17 +235,17 @@ export async function deleteCliente(
 }
 
 export async function searchClientes(
-	empresaId: string,
+	contadorId: string,
 	query: string
-): Promise<ClienteWithRelations[]> {
+): Promise<ClienteFinalWithRelations[]> {
 	const prisma = getPrisma();
 	const normalizedQuery = query.replace(/\D/g, '');
 
-	return prisma.cliente.findMany({
+	return prisma.clienteFinal.findMany({
 		where: {
-			empresaId,
+			contadorId,
 			OR: [
-				{ cnpj: { contains: normalizedQuery } },
+				{ documento: { contains: normalizedQuery } },
 				{ nomeRazao: { contains: query, mode: 'insensitive' } },
 				{ nomeFantasia: { contains: query, mode: 'insensitive' } }
 			]
@@ -237,12 +263,12 @@ export async function searchClientes(
 	});
 }
 
-export async function getClienteStats(empresaId: string) {
+export async function getClienteStats(contadorId: string) {
 	const prisma = getPrisma();
 	const [total, simplesNacional, normal] = await Promise.all([
-		prisma.cliente.count({ where: { empresaId } }),
-		prisma.cliente.count({ where: { empresaId, regime: 'SIMPLES_NACIONAL' } }),
-		prisma.cliente.count({ where: { empresaId, regime: 'NORMAL' } })
+		prisma.clienteFinal.count({ where: { contadorId } }),
+		prisma.clienteFinal.count({ where: { contadorId, regime: 'SIMPLES_NACIONAL' } }),
+		prisma.clienteFinal.count({ where: { contadorId, regime: 'NORMAL' } })
 	]);
 
 	return {
@@ -256,12 +282,12 @@ export async function getClienteStats(empresaId: string) {
 	};
 }
 
-export async function getSituacaoFiscalStats(empresaId: string) {
+export async function getSituacaoFiscalStats(contadorId: string) {
 	const prisma = getPrisma();
 	const [regular, regularizado, irregular] = await Promise.all([
-		prisma.cliente.count({ where: { empresaId, situacaoFiscal: 'REGULAR' } }),
-		prisma.cliente.count({ where: { empresaId, situacaoFiscal: 'REGULARIZADO' } }),
-		prisma.cliente.count({ where: { empresaId, situacaoFiscal: 'IRREGULAR' } })
+		prisma.clienteFinal.count({ where: { contadorId, situacaoFiscal: 'REGULAR' } }),
+		prisma.clienteFinal.count({ where: { contadorId, situacaoFiscal: 'REGULARIZADO' } }),
+		prisma.clienteFinal.count({ where: { contadorId, situacaoFiscal: 'IRREGULAR' } })
 	]);
 
 	const total = regular + regularizado + irregular;

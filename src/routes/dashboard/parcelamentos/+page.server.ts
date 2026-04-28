@@ -12,7 +12,7 @@ export const load: PageServerLoad = async (event) => {
 		};
 	}
 
-	const empresaId = user.empresaId;
+	const contadorId = user.contadorId;
 
 	let parcelamentos: any[] = [];
 	let summary: any[] = [];
@@ -21,13 +21,13 @@ export const load: PageServerLoad = async (event) => {
 		const prisma = getPrisma();
 		parcelamentos = await prisma.parcelamento.findMany({
 			where: {
-				cliente: { empresaId }
+				cliente: { contadorId }
 			},
 			include: {
 				cliente: {
 					select: {
 						id: true,
-						cnpj: true,
+						documento: true,
 						nomeRazao: true
 					}
 				}

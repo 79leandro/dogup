@@ -19,7 +19,7 @@ export const load: PageServerLoad = async (event) => {
 		};
 	}
 
-	const empresaId = user.empresaId;
+	const contadorId = user.contadorId;
 
 	let parcelamentos: any[] = [];
 	let certificados: any[] = [];
@@ -32,7 +32,7 @@ export const load: PageServerLoad = async (event) => {
 			prisma.parcelamento.groupBy({
 				by: ['tipo'],
 				where: {
-					cliente: { empresaId }
+					cliente: { contadorId }
 				},
 				_count: { id: true },
 				_sum: { parcelasEmAtraso: true }
@@ -40,20 +40,20 @@ export const load: PageServerLoad = async (event) => {
 			prisma.certificado.groupBy({
 				by: ['status'],
 				where: {
-					cliente: { empresaId }
+					cliente: { contadorId }
 				},
 				_count: { id: true }
 			}),
 			prisma.procuracao.groupBy({
 				by: ['status'],
 				where: {
-					cliente: { empresaId }
+					cliente: { contadorId }
 				},
 				_count: { id: true }
 			}),
 			prisma.mensagem.count({
 				where: {
-					cliente: { empresaId },
+					cliente: { contadorId },
 					relevancia: 'RELEVANTE',
 					lida: false
 				}
@@ -70,9 +70,9 @@ export const load: PageServerLoad = async (event) => {
 
 	// Fetch other stats
 	const [clienteStats, situacaoStats, obrigacaoStats] = await Promise.all([
-		getClienteStats(empresaId),
-		getSituacaoFiscalStats(empresaId),
-		getObrigacaoStats(empresaId)
+		getClienteStats(contadorId),
+		getSituacaoFiscalStats(contadorId),
+		getObrigacaoStats(contadorId)
 	]);
 
 	// Transform parcelamentos data

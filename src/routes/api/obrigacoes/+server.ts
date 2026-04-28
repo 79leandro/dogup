@@ -22,11 +22,11 @@ export const GET: RequestHandler = async (event) => {
 		const stats = url.searchParams.get('stats') === 'true';
 
 		if (stats) {
-			const obrigacaoStats = await getObrigacaoStats(user.empresaId);
+			const obrigacaoStats = await getObrigacaoStats(user.contadorId);
 			return json({ stats: obrigacaoStats });
 		}
 
-		const obrigacoes = await listObrigacoes(user.empresaId, {
+		const obrigacoes = await listObrigacoes(user.contadorId, {
 			...(tipo && { tipo }),
 			...(status && { status })
 		});
@@ -74,7 +74,7 @@ export const POST: RequestHandler = async (event) => {
 						? `Protocolo: ${resultado.protocolo}`
 						: resultado.erro
 				},
-				user.empresaId,
+				user.contadorId,
 				{ id: user.id, nome: user.nome },
 				ipAddress,
 				userAgent
@@ -100,7 +100,7 @@ export const POST: RequestHandler = async (event) => {
 				status: data.status,
 				observacao: data.observacao
 			},
-			user.empresaId,
+			user.contadorId,
 			{ id: user.id, nome: user.nome },
 			ipAddress,
 			userAgent

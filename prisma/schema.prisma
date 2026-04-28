@@ -1,5 +1,5 @@
 // Prisma Schema for DOGUP Fiscal Compliance System
-// Multi-company architecture for accounting offices
+// Multi-contador architecture for accounting offices
 
 generator client {
   provider = "prisma-client-js"
@@ -10,21 +10,48 @@ datasource db {
 }
 
 // ============================================
-// EMPRESA - Accounting Office / Company
+// TIPO PESSOA - Discriminator for PF/PJ
 // ============================================
-model Empresa {
-  id        String   @id @default(cuid())
-  nome      String
-  slug      String   @unique
-  usuarios  Usuario[]
-  clientes  Cliente[]
-  perfis    Perfil[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+enum TipoPessoa {
+  PF  // Pessoa Física
+  PJ  // Pessoa Jurídica
 }
 
 // ============================================
-// USUÁRIO - User belonging to an Empresa
+// CONTADOR - Accounting Office / Accountant
+// ============================================
+model Contador {
+  id                  String    @id @default(cuid())
+  tipoPessoa          TipoPessoa
+  documento          String    @unique  // CPF (PF) or CNPJ (PJ), digits only
+  nome                String
+  slug                String    @unique
+  crc                 String?   // CRC registration number
+  cna                 String?   // CNA code
+  inscricaoEstadual   String?
+  email               String    @unique
+  telefone            String?
+  logradouro          String?
+  numero              String?
+  complemento         String?
+  bairro              String?
+  cidade              String?
+  uf                  String    @default("")
+  cep                 String?
+  logoUrl             String?
+  responsavel         String?   // Technical responsible name
+  usuarios            Usuario[]
+  clientes            ClienteFinal[]
+  perfis              Perfil[]
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  @@index([documento])
+  @@index([crc])
+}
+
+// ============================================
+// USUÁRIO - User belonging to a Contador
 // ============================================
 model Usuario {
   id        String   @id @default(cuid())
@@ -34,13 +61,13 @@ model Usuario {
   cargo     String?
   perfil    Perfil?  @relation(fields: [perfilId], references: [id])
   perfilId  String?
-  empresa   Empresa  @relation(fields: [empresaId], references: [id], onDelete: Cascade)
-  empresaId String
+  contador   Contador  @relation(fields: [contadorId], references: [id], onDelete: Cascade)
+  contadorId String
   sessoes   Sessao[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([empresaId])
+  @@index([contadorId])
 }
 
 // ============================================
@@ -59,16 +86,19 @@ model Sessao {
 }
 
 // ============================================
-// CLIENTE - CNPJ / Client of the empresa
+// CLIENTE FINAL - CNPJ/CPF Client of the contador
 // ============================================
-model Cliente {
+model ClienteFinal {
   id                  String            @id @default(cuid())
-  cnpj                String            @unique
+  tipoPessoa          TipoPessoa
+  documento           String            @unique  // CPF or CNPJ, digits only
   nomeRazao           String
   nomeFantasia        String?
+  estadoCivil         String?           // Only for PF
+  inscricaoEstadual   String?
   regime              RegimeTributario
-  empresa             Empresa           @relation(fields: [empresaId], references: [id], onDelete: Cascade)
-  empresaId           String
+  contador            Contador          @relation(fields: [contadorId], references: [id], onDelete: Cascade)
+  contadorId          String
   situacaoFiscal      SituacaoFiscal
   logradouro          String?
   bairro              String?
@@ -86,8 +116,8 @@ model Cliente {
   createdAt           DateTime          @default(now())
   updatedAt           DateTime          @updatedAt
 
-  @@index([empresaId])
-  @@index([cnpj])
+  @@index([contadorId])
+  @@index([documento])
 }
 
 enum RegimeTributario {
@@ -106,7 +136,7 @@ enum SituacaoFiscal {
 // ============================================
 model Obrigacao {
   id          String           @id @default(cuid())
-  cliente     Cliente          @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+  cliente     ClienteFinal     @relation(fields: [clienteId], references: [id], onDelete: Cascade)
   clienteId   String
   tipo        TipoObrigacao
   ano         Int
@@ -127,7 +157,6 @@ enum TipoObrigacao {
   GFIP
   DIRF
   RAIS
-  // extensor for future types
 }
 
 enum StatusObrigacao {
@@ -143,7 +172,7 @@ enum StatusObrigacao {
 // ============================================
 model Parcelamento {
   id          String             @id @default(cuid())
-  cliente     Cliente            @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+  cliente     ClienteFinal       @relation(fields: [clienteId], references: [id], onDelete: Cascade)
   clienteId   String
   tipo        TipoParcelamento
   total       Decimal            @db.Decimal(15, 2)
@@ -171,7 +200,7 @@ enum TipoParcelamento {
 // ============================================
 model Certificado {
   id          String   @id @default(cuid())
-  cliente     Cliente  @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+  cliente     ClienteFinal  @relation(fields: [clienteId], references: [id], onDelete: Cascade)
   clienteId   String
   tipo        String   // A1, A3
   cnpj        String?  // emissor do certificado
@@ -196,7 +225,7 @@ enum StatusCertificado {
 // ============================================
 model Procuracao {
   id          String           @id @default(cuid())
-  cliente     Cliente          @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+  cliente     ClienteFinal     @relation(fields: [clienteId], references: [id], onDelete: Cascade)
   clienteId   String
   tipo        TipoProcuracao
   validade    DateTime
@@ -226,7 +255,7 @@ enum StatusProcuracao {
 // ============================================
 model Mensagem {
   id          String           @id @default(cuid())
-  cliente     Cliente          @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+  cliente     ClienteFinal     @relation(fields: [clienteId], references: [id], onDelete: Cascade)
   clienteId   String
   titulo      String
   conteudo    String
@@ -261,15 +290,15 @@ model Perfil {
   id          String      @id @default(cuid())
   nome        String
   isAdmin     Boolean     @default(false)
-  empresa     Empresa     @relation(fields: [empresaId], references: [id], onDelete: Cascade)
-  empresaId   String
+  contador    Contador    @relation(fields: [contadorId], references: [id], onDelete: Cascade)
+  contadorId   String
   usuarios    Usuario[]
   permissoes  Permissao[] @relation("PerfilPermissoes")
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
 
-  @@unique([nome, empresaId])
-  @@index([empresaId])
+  @@unique([nome, contadorId])
+  @@index([contadorId])
 }
 
 model Permissao {
@@ -288,7 +317,7 @@ model Auditoria {
   id           String         @id @default(cuid())
   usuarioId    String
   usuarioNome  String
-  empresaId    String
+  contadorId   String
   acao         EnumAuditoria
   entidade     String
   entidadeId   String
@@ -298,7 +327,7 @@ model Auditoria {
   userAgent    String?
   createdAt    DateTime       @default(now())
 
-  @@index([empresaId, createdAt])
+  @@index([contadorId, createdAt])
   @@index([entidade, entidadeId])
   @@index([usuarioId])
   @@index([acao])

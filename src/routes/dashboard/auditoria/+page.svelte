@@ -6,7 +6,7 @@
 		id: string;
 		usuarioId: string;
 		usuarioNome: string;
-		empresaId: string;
+		contadorId: string;
 		acao: 'CREATE' | 'UPDATE' | 'DELETE';
 		entidade: string;
 		entidadeId: string;

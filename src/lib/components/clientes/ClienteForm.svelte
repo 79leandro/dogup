@@ -2,18 +2,24 @@
 	import { notifications } from '$lib/stores/notifications';
 	import {
 		formatCNPJInput,
+		formatCPFInput,
 		validateCNPJ,
+		validateCPF,
 		getCNPJErrorMessage,
+		getCPFErrorMessage,
 		isCNPJAlfanumerico
 	} from '$lib/utils/cnpj';
 	import { fetchCNPJData, mapSituacaoFiscal } from '$lib/services/receitaFederal';
+	import type { TipoPessoa } from '@prisma/client';
 
 	interface Props {
 		cliente?: {
 			id?: string;
-			cnpj: string;
+			tipoPessoa?: TipoPessoa;
+			documento: string;
 			nomeRazao: string;
 			nomeFantasia?: string | null;
+			estadoCivil?: string | null;
 			regime: string;
 			situacaoFiscal: string;
 			logradouro?: string | null;
@@ -35,9 +41,11 @@
 
 	// Initialize form data directly without referencing cliente prop
 	let formData = $state({
-		cnpj: '',
+		tipoPessoa: 'PJ' as 'PF' | 'PJ',
+		documento: '',
 		nomeRazao: '',
 		nomeFantasia: '',
+		estadoCivil: '',
 		regime: 'SIMPLES_NACIONAL',
 		situacaoFiscal: 'REGULAR',
 		logradouro: '',
@@ -54,9 +62,13 @@
 	$effect(() => {
 		if (cliente) {
 			formData = {
-				cnpj: formatCNPJInput(cliente.cnpj || ''),
+				tipoPessoa: (cliente.tipoPessoa as 'PF' | 'PJ') || 'PJ',
+				documento: cliente.tipoPessoa === 'PF'
+					? formatCPFInput(cliente.documento || '')
+					: formatCNPJInput(cliente.documento || ''),
 				nomeRazao: cliente.nomeRazao || '',
 				nomeFantasia: cliente.nomeFantasia || '',
+				estadoCivil: cliente.estadoCivil || '',
 				regime: cliente.regime || 'SIMPLES_NACIONAL',
 				situacaoFiscal: cliente.situacaoFiscal || 'REGULAR',
 				logradouro: cliente.logradouro || '',
@@ -71,7 +83,7 @@
 		}
 	});
 
-	let cnpjError = $state<string | null>(null);
+	let documentoError = $state<string | null>(null);
 
 	function formatCEP(value: string): string {
 		const digits = value.replace(/\D/g, '');
@@ -79,23 +91,37 @@
 		return `${digits.slice(0, 5)}-${digits.slice(5, 8)}`;
 	}
 
-	function handleCNPJInput(e: Event) {
+	function handleDocumentoInput(e: Event) {
 		const input = e.target as HTMLInputElement;
-		// Armazena apenas números e letras (sem máscara) durante a digitação
 		const cleaned = input.value.replace(/[^A-Z\d]/gi, '').toUpperCase();
-		formData.cnpj = cleaned.slice(0, 14);
+
+		if (formData.tipoPessoa === 'PF') {
+			// CPF: 11 digits
+			formData.documento = cleaned.slice(0, 11);
+		} else {
+			// CNPJ: 14 digits
+			formData.documento = cleaned.slice(0, 14);
+		}
 		// Limpa erro enquanto digita
-		cnpjError = null;
+		documentoError = null;
 	}
 
-	function handleCNPJBlur(e: Event) {
+	function handleDocumentoBlur(e: Event) {
 		const input = e.target as HTMLInputElement;
-		// Aplica formatação apenas ao sair do campo
 		const cleaned = input.value.replace(/[^A-Z\d]/gi, '').toUpperCase();
-		formData.cnpj = formatCNPJInput(cleaned);
-		// Valida no blur quando tem conteúdo
-		if (cleaned.length > 0) {
-			cnpjError = getCNPJErrorMessage(formData.cnpj);
+
+		if (formData.tipoPessoa === 'PF') {
+			formData.documento = formatCPFInput(cleaned);
+			if (cleaned.length > 0 && cleaned.length < 11) {
+				documentoError = 'CPF está incompleto';
+			} else if (cleaned.length === 11) {
+				documentoError = getCPFErrorMessage(formData.documento);
+			}
+		} else {
+			formData.documento = formatCNPJInput(cleaned);
+			if (cleaned.length > 0) {
+				documentoError = getCNPJErrorMessage(formData.documento);
+			}
 		}
 	}
 
@@ -104,15 +130,27 @@
 		formData.cep = formatCEP(input.value);
 	}
 
-	async function handleBuscarCNPJ() {
-		const cnpjClean = formData.cnpj.replace(/[^A-Z\d]/gi, '').toUpperCase();
+	function handleTipoPessoaChange(e: Event) {
+		const select = e.target as HTMLSelectElement;
+		formData.tipoPessoa = select.value as 'PF' | 'PJ';
+		formData.documento = '';
+		documentoError = null;
+	}
 
-		if (cnpjClean.length !== 14) {
+	async function handleBuscarDocumento() {
+		const cleanDoc = formData.documento.replace(/[^A-Z\d]/gi, '').toUpperCase();
+
+		if (formData.tipoPessoa === 'PF') {
+			notifications.warning('CPF', 'Consulta Receita Federal disponível apenas para CNPJ');
+			return;
+		}
+
+		if (cleanDoc.length !== 14) {
 			notifications.warning('CNPJ incompleto', 'Digite os 14 dígitos do CNPJ');
 			return;
 		}
 
-		if (!validateCNPJ(formData.cnpj)) {
+		if (!validateCNPJ(formData.documento)) {
 			notifications.warning('CNPJ inválido', 'Verifique o número digitado');
 			return;
 		}
@@ -120,7 +158,7 @@
 		isSearching = true;
 
 		try {
-			const result = await fetchCNPJData(cnpjClean);
+			const result = await fetchCNPJData(cleanDoc);
 
 			if (result.success && result.data) {
 				const data = result.data;
@@ -160,27 +198,55 @@
 		}
 	}
 
-	function validateCNPJWithError(cnpj: string): boolean {
-		cnpjError = getCNPJErrorMessage(cnpj);
-		return cnpjError === null;
+	function validateDocumento(): boolean {
+		const cleanDoc = formData.documento.replace(/[^A-Z\d]/gi, '').toUpperCase();
+
+		if (formData.tipoPessoa === 'PF') {
+			if (cleanDoc.length !== 11) {
+				documentoError = 'CPF incompleto';
+				return false;
+			}
+			if (!validateCPF(cleanDoc)) {
+				documentoError = getCPFErrorMessage(formData.documento);
+				return false;
+			}
+		} else {
+			if (cleanDoc.length !== 14) {
+				documentoError = 'CNPJ incompleto';
+				return false;
+			}
+			if (!validateCNPJ(cleanDoc)) {
+				documentoError = getCNPJErrorMessage(formData.documento);
+				return false;
+			}
+		}
+
+		documentoError = null;
+		return true;
 	}
 
 	async function handleSubmit(e: Event) {
 		e.preventDefault();
 
-		// Always send clean CNPJ to API (without formatting)
-		const cleanCNPJ = formData.cnpj.replace(/[^A-Z\d]/gi, '').toUpperCase();
-		const submitData = { ...formData, cnpj: cleanCNPJ };
-
-		if (!validateCNPJ(cleanCNPJ)) {
-			notifications.error('CNPJ inválido', cnpjError || 'Verifique o formato do CNPJ');
+		if (!validateDocumento()) {
+			notifications.error(
+				formData.tipoPessoa === 'PF' ? 'CPF inválido' : 'CNPJ inválido',
+				documentoError || 'Verifique o formato do documento'
+			);
 			return;
 		}
 
-		if (!submitData.nomeRazao.trim()) {
+		if (!formData.nomeRazao.trim()) {
 			notifications.error('Razão Social é obrigatória');
 			return;
 		}
+
+		// Always send clean documento to API (without formatting)
+		const cleanDoc = formData.documento.replace(/[^A-Z\d]/gi, '').toUpperCase();
+		const submitData = {
+			...formData,
+			documento: cleanDoc
+		};
 
 		isLoading = true;
 
@@ -198,7 +264,7 @@
 
 			if (!response.ok) {
 				if (response.status === 409 || result.error?.includes('Cliente já existente') || result.error?.includes('já existe')) {
-					notifications.warning('Cliente já existente', 'Este CNPJ já está cadastrado');
+					notifications.warning('Cliente já existente', 'Este documento já está cadastrado');
 				} else {
 					throw new Error(result.error || 'Erro ao salvar cliente');
 				}
@@ -225,34 +291,47 @@
 </script>
 
 <form onsubmit={handleSubmit} class="space-y-6">
-	<!-- CNPJ -->
+	<!-- Tipo de Pessoa -->
 	<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-		<div class="md:col-span-2">
-			<label for="cnpj" class="label">CNPJ *</label>
-			<input
-				type="text"
-				id="cnpj"
-				value={formData.cnpj}
-				oninput={handleCNPJInput}
-				onblur={handleCNPJBlur}
-				class="input {cnpjError ? 'input-error' : ''}"
-				placeholder="Digite o CNPJ"
-				maxlength="14"
-				required
-			/>
-			{#if cnpjError}
-				<p class="text-xs text-semantic-critical mt-1">{cnpjError}</p>
-			{:else if formData.cnpj && isCNPJAlfanumerico(formData.cnpj)}
-				<p class="text-xs text-semantic-warning mt-1">CNPJ alfanumérico (novo formato)</p>
-			{:else if formData.cnpj && validateCNPJ(formData.cnpj)}
-				<p class="text-xs text-semantic-success mt-1">CNPJ válido</p>
-			{/if}
+		<div>
+			<label for="tipoPessoa" class="label">Tipo de Pessoa *</label>
+			<select id="tipoPessoa" bind:value={formData.tipoPessoa} onchange={handleTipoPessoaChange} class="input">
+				<option value="PJ">Pessoa Jurídica (CNPJ)</option>
+				<option value="PF">Pessoa Física (CPF)</option>
+			</select>
 		</div>
 
+		<div class="md:col-span-2">
+			<label for="documento" class="label">
+				{formData.tipoPessoa === 'PF' ? 'CPF *' : 'CNPJ *'}
+			</label>
+			<input
+				type="text"
+				id="documento"
+				value={formData.documento}
+				oninput={handleDocumentoInput}
+				onblur={handleDocumentoBlur}
+				class="input {documentoError ? 'input-error' : ''}"
+				placeholder={formData.tipoPessoa === 'PF' ? 'Digite o CPF' : 'Digite o CNPJ'}
+				maxlength={formData.tipoPessoa === 'PF' ? 11 : 14}
+				required
+			/>
+			{#if documentoError}
+				<p class="text-xs text-semantic-critical mt-1">{documentoError}</p>
+			{:else if formData.tipoPessoa === 'PJ' && formData.documento && isCNPJAlfanumerico(formData.documento)}
+				<p class="text-xs text-semantic-warning mt-1">CNPJ alfanumérico (novo formato)</p>
+			{:else if formData.documento && (formData.tipoPessoa === 'PF' ? validateCPF(formData.documento) : validateCNPJ(formData.documento))}
+				<p class="text-xs text-semantic-success mt-1">{formData.tipoPessoa === 'PF' ? 'CPF válido' : 'CNPJ válido'}</p>
+			{/if}
+		</div>
+	</div>
+
+	{#if formData.tipoPessoa === 'PJ'}
+		<!-- Buscar CNPJ - only for PJ -->
 		<div class="flex items-end">
 			<button
 				type="button"
-				onclick={handleBuscarCNPJ}
+				onclick={handleBuscarDocumento}
 				disabled={isSearching}
 				class="btn btn-ghost w-full flex items-center justify-center gap-2"
 			>
@@ -270,7 +349,7 @@
 				{/if}
 			</button>
 		</div>
-	</div>
+	{/if}
 
 	<div>
 		<label for="regime" class="label">Regime Tributário *</label>
@@ -280,30 +359,47 @@
 		</select>
 	</div>
 
-	<!-- Razão Social -->
+	<!-- Razão Social / Nome Completo -->
 	<div>
-		<label for="nomeRazao" class="label">Razão Social *</label>
+		<label for="nomeRazao" class="label">
+			{formData.tipoPessoa === 'PF' ? 'Nome Completo *' : 'Razão Social *'}
+		</label>
 		<input
 			type="text"
 			id="nomeRazao"
 			bind:value={formData.nomeRazao}
 			class="input"
-			placeholder="Razão Social completa"
+			placeholder={formData.tipoPessoa === 'PF' ? 'Nome completo' : 'Razão Social completa'}
 			required
 		/>
 	</div>
 
-	<!-- Nome Fantasia -->
-	<div>
-		<label for="nomeFantasia" class="label">Nome Fantasia</label>
-		<input
-			type="text"
-			id="nomeFantasia"
-			bind:value={formData.nomeFantasia}
-			class="input"
-			placeholder="Nome fantasia (opcional)"
-		/>
-	</div>
+	{#if formData.tipoPessoa === 'PJ'}
+		<!-- Nome Fantasia - only for PJ -->
+		<div>
+			<label for="nomeFantasia" class="label">Nome Fantasia</label>
+			<input
+				type="text"
+				id="nomeFantasia"
+				bind:value={formData.nomeFantasia}
+				class="input"
+				placeholder="Nome fantasia (opcional)"
+			/>
+		</div>
+	{:else}
+		<!-- Estado Civil - only for PF -->
+		<div>
+			<label for="estadoCivil" class="label">Estado Civil</label>
+			<select id="estadoCivil" bind:value={formData.estadoCivil} class="input">
+				<option value="">Selecione</option>
+				<option value="SOLTEIRO">Solteiro(a)</option>
+				<option value="CASADO">Casado(a)</option>
+				<option value="DIVORCIADO">Divorciado(a)</option>
+				<option value="VIUVO">Viúvo(a)</option>
+				<option value="UNIAO_ESTAVEL">União Estável</option>
+			</select>
+		</div>
+	{/if}
 
 	<!-- Situação Fiscal -->
 	<div>

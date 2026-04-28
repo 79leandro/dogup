@@ -2,13 +2,17 @@
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import { notifications } from '$lib/stores/notifications';
+	import { formatDocumento } from '$lib/utils/cnpj';
 	import ClienteForm from '$lib/components/clientes/ClienteForm.svelte';
+	import type { TipoPessoa } from '@prisma/client';
 
 	interface Cliente {
 		id: string;
-		cnpj: string;
+		tipoPessoa: TipoPessoa;
+		documento: string;
 		nomeRazao: string;
 		nomeFantasia: string | null;
+		estadoCivil: string | null;
 		regime: string;
 		situacaoFiscal: string;
 		logradouro: string | null;
@@ -50,11 +54,6 @@
 		} finally {
 			isLoading = false;
 		}
-	}
-
-	function formatCNPJ(cnpj: string): string {
-		if (cnpj.length !== 14) return cnpj;
-		return `${cnpj.slice(0, 2)}.${cnpj.slice(2, 5)}.${cnpj.slice(5, 8)}/${cnpj.slice(8, 12)}-${cnpj.slice(12, 14)}`;
 	}
 
 	function formatCEP(cep: string): string {
@@ -114,7 +113,7 @@
 				</a>
 				<div>
 					<h1 class="font-display text-2xl font-bold text-slate-800">{cliente.nomeRazao}</h1>
-					<p class="text-slate-400">{formatCNPJ(cliente.cnpj)}</p>
+					<p class="text-slate-400">{formatDocumento(cliente.documento)}</p>
 				</div>
 				<span class="badge {clienteSituacao.class}">{clienteSituacao.label}</span>
 			</div>
@@ -175,8 +174,8 @@
 						</div>
 
 						<div>
-							<span class="text-xs text-slate-400 uppercase tracking-wide block">CNPJ</span>
-							<p class="text-slate-800 mt-1 font-mono">{formatCNPJ(cliente.cnpj)}</p>
+							<span class="text-xs text-slate-400 uppercase tracking-wide block">{cliente.tipoPessoa === 'PF' ? 'CPF' : 'CNPJ'}</span>
+							<p class="text-slate-800 mt-1 font-mono">{formatDocumento(cliente.documento)}</p>
 						</div>
 					</div>
 				</div>

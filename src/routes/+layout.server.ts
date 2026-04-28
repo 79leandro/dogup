@@ -11,9 +11,9 @@ export const load: LayoutServerLoad = async (event) => {
 					id: user.id,
 					email: user.email,
 					nome: user.nome,
-					empresaId: user.empresaId,
-					empresaNome: user.empresaNome,
-					empresaSlug: user.empresaSlug,
+					contadorId: user.contadorId,
+					contadorNome: user.contadorNome,
+					contadorSlug: user.contadorSlug,
 					perfil: user.perfil
 				}
 			: null

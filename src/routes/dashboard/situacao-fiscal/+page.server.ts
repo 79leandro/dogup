@@ -12,11 +12,11 @@ export const load: PageServerLoad = async (event) => {
 		};
 	}
 
-	const empresaId = user.empresaId;
+	const contadorId = user.contadorId;
 
 	const [stats, clientes] = await Promise.all([
-		getSituacaoFiscalStats(empresaId),
-		listClientes(empresaId)
+		getSituacaoFiscalStats(contadorId),
+		listClientes(contadorId)
 	]);
 
 	return {

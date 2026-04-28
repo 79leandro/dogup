@@ -381,7 +381,7 @@
 			{#if !isCollapsed}
 				<div class="flex-1 min-w-0">
 					<p class="text-sm font-medium text-slate-800 truncate">{data.user?.nome ?? 'Usuário'}</p>
-					<p class="text-xs text-slate-400 truncate">{data.user?.empresaNome ?? 'Empresa'}</p>
+					<p class="text-xs text-slate-400 truncate">{data.user?.contadorNome ?? 'Contador'}</p>
 				</div>
 				<form method="POST" action="/logout">
 					<button

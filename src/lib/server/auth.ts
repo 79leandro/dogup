@@ -7,9 +7,9 @@ export interface SessionUser {
 	id: string;
 	email: string;
 	nome: string;
-	empresaId: string;
-	empresaNome: string;
-	empresaSlug: string;
+	contadorId: string;
+	contadorNome: string;
+	contadorSlug: string;
 	perfil?: {
 		nome: string;
 		isAdmin: boolean;
@@ -30,8 +30,8 @@ export async function getSession(event: RequestEvent): Promise<SessionUser | nul
 			where: { token },
 			include: {
 				usuario: {
-					include: { 
-						empresa: true,
+					include: {
+						contador: true,
 						perfil: {
 							include: { permissoes: true }
 						}
@@ -55,9 +55,9 @@ export async function getSession(event: RequestEvent): Promise<SessionUser | nul
 			id: session.usuario.id,
 			email: session.usuario.email,
 			nome: session.usuario.nome,
-			empresaId: session.usuario.empresaId,
-			empresaNome: session.usuario.empresa.nome,
-			empresaSlug: session.usuario.empresa.slug,
+			contadorId: session.usuario.contadorId,
+			contadorNome: session.usuario.contador.nome,
+			contadorSlug: session.usuario.contador.slug,
 			perfil: session.usuario.perfil ? {
 				nome: session.usuario.perfil.nome,
 				isAdmin: session.usuario.perfil.isAdmin,
@@ -94,8 +94,8 @@ export async function login(
 
 		const user = await prisma.usuario.findUnique({
 			where: { email },
-			include: { 
-				empresa: true,
+			include: {
+				contador: true,
 				perfil: {
 					include: { permissoes: true }
 				}
@@ -140,9 +140,9 @@ export async function login(
 				id: user.id,
 				email: user.email,
 				nome: user.nome,
-				empresaId: user.empresaId,
-				empresaNome: user.empresa.nome,
-				empresaSlug: user.empresa.slug,
+				contadorId: user.contadorId,
+				contadorNome: user.contador.nome,
+				contadorSlug: user.contador.slug,
 				perfil: user.perfil ? {
 					nome: user.perfil.nome,
 					isAdmin: user.perfil.isAdmin,
@@ -155,7 +155,7 @@ export async function login(
 			message: error instanceof Error ? error.message : 'Unknown',
 			code: (error as any).code,
 			meta: (error as any).meta,
-			constructor: error.constructor.name
+			constructor: (error as Error).constructor.name
 		});
 		return { success: false, error: 'Erro ao realizar login' };
 	}

@@ -14,22 +14,27 @@ const prisma = new PrismaClient({ adapter });
 async function main() {
 	console.log('🌱 Starting database seed...');
 
-	// Create demo empresa
-	const empresa = await prisma.empresa.upsert({
+	// Create demo contador (formerly empresa)
+	const contador = await prisma.contador.upsert({
 		where: { slug: 'dogup-assessoria' },
 		update: {},
 		create: {
 			nome: 'DOGUP Assessoria Contábil',
-			slug: 'dogup-assessoria'
+			slug: 'dogup-assessoria',
+			tipoPessoa: 'PJ',
+			documento: '12345678000190', // CNPJ do contador
+			email: 'admin@dogup.com.br',
+			crc: 'SP123456',
+			telefone: '(11) 99999-9999'
 		}
 	});
-	console.log(`✅ Empresa created: ${empresa.nome}`);
+	console.log(`✅ Contador created: ${contador.nome}`);
 
 	// Create Perfis and Permissoes
 	const permKeys = [
-		'MENU_DASHBOARD', 'MENU_CLIENTES', 'MENU_OBRIGACOES', 'MENU_DCTFWEB', 
-		'MENU_SITUACAO_FISCAL', 'MENU_CERTIDOES', 'MENU_PARCELAMENTOS', 
-		'MENU_CAIXA_POSTAL', 'MENU_CERTIFICADOS', 'MENU_SIMPLES_NACIONAL', 
+		'MENU_DASHBOARD', 'MENU_CLIENTES', 'MENU_OBRIGACOES', 'MENU_DCTFWEB',
+		'MENU_SITUACAO_FISCAL', 'MENU_CERTIDOES', 'MENU_PARCELAMENTOS',
+		'MENU_CAIXA_POSTAL', 'MENU_CERTIFICADOS', 'MENU_SIMPLES_NACIONAL',
 		'MENU_PER_DCOMP', 'MENU_GERAL_FERRAMENTAS', 'MENU_GERAL_FISCAL', 'MENU_GERAL_OBRIGACOES'
 	];
 
@@ -44,23 +49,23 @@ async function main() {
 	const allPerms = await prisma.permissao.findMany();
 
 	const perfilAdmin = await prisma.perfil.upsert({
-		where: { nome_empresaId: { nome: 'ADMIN', empresaId: empresa.id } },
+		where: { nome_contadorId: { nome: 'ADMIN', contadorId: contador.id } },
 		update: { isAdmin: true },
 		create: {
 			nome: 'ADMIN',
 			isAdmin: true,
-			empresaId: empresa.id
+			contadorId: contador.id
 		}
 	});
 	console.log(`✅ Perfil ADMIN created`);
 
 	const perfilOperador = await prisma.perfil.upsert({
-		where: { nome_empresaId: { nome: 'OPERADOR', empresaId: empresa.id } },
+		where: { nome_contadorId: { nome: 'OPERADOR', contadorId: contador.id } },
 		update: {},
 		create: {
 			nome: 'OPERADOR',
 			isAdmin: false,
-			empresaId: empresa.id,
+			contadorId: contador.id,
 			permissoes: {
 				connect: allPerms.slice(0, 3).map(p => ({ id: p.id })) // Apenas algumas permissoes demo
 			}
@@ -78,7 +83,7 @@ async function main() {
 			senha: hashedPassword,
 			nome: 'Administrador',
 			cargo: 'Gerente',
-			empresaId: empresa.id,
+			contadorId: contador.id,
 			perfilId: perfilAdmin.id
 		}
 	});
@@ -92,16 +97,17 @@ async function main() {
 			senha: hashedPassword,
 			nome: 'Operador de Teste',
 			cargo: 'Assistente',
-			empresaId: empresa.id,
+			contadorId: contador.id,
 			perfilId: perfilOperador.id
 		}
 	});
 	console.log(`✅ User Operador created: ${operador.email}`);
 
-	// Create demo clientes
+	// Create demo clientes (ClienteFinal - empresas que o contador atende)
 	const clientes = [
 		{
-			cnpj: '12345678000190',
+			tipoPessoa: 'PJ',
+			documento: '12345678000195',
 			nomeRazao: 'Empresa Alpha Ltda',
 			nomeFantasia: 'Alpha',
 			regime: 'SIMPLES_NACIONAL',
@@ -115,7 +121,8 @@ async function main() {
 			responsavelTecnico: 'João Contador'
 		},
 		{
-			cnpj: '98765432000154',
+			tipoPessoa: 'PJ',
+			documento: '98765432000160',
 			nomeRazao: 'Comercial Beta S.A.',
 			nomeFantasia: 'Beta S.A.',
 			regime: 'NORMAL',
@@ -129,7 +136,8 @@ async function main() {
 			responsavelTecnico: 'Maria Contadora'
 		},
 		{
-			cnpj: '45678901000123',
+			tipoPessoa: 'PJ',
+			documento: '45678901000129',
 			nomeRazao: 'Serviços Gamma Eireli',
 			nomeFantasia: 'Gamma Serviços',
 			regime: 'SIMPLES_NACIONAL',
@@ -143,7 +151,8 @@ async function main() {
 			responsavelTecnico: 'Pedro Contador'
 		},
 		{
-			cnpj: '78901234000167',
+			tipoPessoa: 'PJ',
+			documento: '78901234000173',
 			nomeRazao: 'Indústria Delta Ltda',
 			nomeFantasia: 'Delta Indústria',
 			regime: 'NORMAL',
@@ -157,7 +166,8 @@ async function main() {
 			responsavelTecnico: 'Ana Contadora'
 		},
 		{
-			cnpj: '34567890000145',
+			tipoPessoa: 'PJ',
+			documento: '34567890000151',
 			nomeRazao: 'Tech Solutions Eireli',
 			nomeFantasia: 'Tech Solutions',
 			regime: 'SIMPLES_NACIONAL',
@@ -169,19 +179,34 @@ async function main() {
 			email: 'contato@techsolutions.com.br',
 			telefone: '(48) 55555-5555',
 			responsavelTecnico: 'Carlos Contador'
+		},
+		{
+			tipoPessoa: 'PF',
+			documento: '12345678901',
+			nomeRazao: 'Maria da Silva MEI',
+			regime: 'SIMPLES_NACIONAL',
+			situacaoFiscal: 'REGULAR',
+			estadoCivil: 'CASADO',
+			logradouro: 'Rua das Pedras, 50',
+			cidade: 'Santos',
+			uf: 'SP',
+			cep: '11010000',
+			email: 'maria@silva.com.br',
+			telefone: '(13) 99999-8888',
+			responsavelTecnico: 'João Contador'
 		}
 	];
 
 	for (const clienteData of clientes) {
-		const cliente = await prisma.cliente.upsert({
-			where: { cnpj: clienteData.cnpj },
+		const cliente = await prisma.clienteFinal.upsert({
+			where: { documento: clienteData.documento },
 			update: {},
 			create: {
 				...clienteData,
-				empresaId: empresa.id
+				contadorId: contador.id
 			}
 		});
-		console.log(`✅ Cliente created: ${cliente.nomeRazao}`);
+		console.log(`✅ Cliente created: ${cliente.nomeRazao} (${cliente.tipoPessoa})`);
 
 		// Create some obligations for each cliente
 		const currentYear = new Date().getFullYear();
@@ -204,29 +229,31 @@ async function main() {
 		}
 		console.log(`   - Obrigações adicionadas para ${cliente.nomeRazao}`);
 
-		// Create some certificates
-		const certificados = [
-			{
-				tipo: 'A1',
-				cnpj: '12345678000190',
-				validade: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
-				status: 'VALIDO'
-			},
-			{
-				tipo: 'A3',
-				cnpj: '12345678000190',
-				validade: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000), // 10 days ago
-				status: 'VENCIDO'
-			}
-		];
-
-		for (const certData of certificados) {
-			await prisma.certificado.create({
-				data: {
-					...certData,
-					clienteId: cliente.id
+		// Create some certificates (only for PJ clientes)
+		if (cliente.tipoPessoa === 'PJ') {
+			const certificados = [
+				{
+					tipo: 'A1',
+					cnpj: clienteData.documento,
+					validade: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
+					status: 'VALIDO'
+				},
+				{
+					tipo: 'A3',
+					cnpj: clienteData.documento,
+					validade: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000), // 10 days ago
+					status: 'VENCIDO'
 				}
-			});
+			];
+
+			for (const certData of certificados) {
+				await prisma.certificado.create({
+					data: {
+						...certData,
+						clienteId: cliente.id
+					}
+				});
+			}
 		}
 
 		// Create some parcelamentos

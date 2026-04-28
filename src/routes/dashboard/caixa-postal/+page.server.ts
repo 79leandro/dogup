@@ -9,7 +9,7 @@ export const load: PageServerLoad = async (event) => {
 		return { mensagens: [], stats: { total: 0, relevantes: 0 } };
 	}
 
-	const empresaId = user.empresaId;
+	const contadorId = user.contadorId;
 
 	let mensagens: any[] = [];
 	let stats = { total: 0, relevantes: 0 };
@@ -18,13 +18,13 @@ export const load: PageServerLoad = async (event) => {
 		const prisma = getPrisma();
 		mensagens = await prisma.mensagem.findMany({
 			where: {
-				cliente: { empresaId }
+				cliente: { contadorId }
 			},
 			include: {
 				cliente: {
 					select: {
 						id: true,
-						cnpj: true,
+						documento: true,
 						nomeRazao: true
 					}
 				}

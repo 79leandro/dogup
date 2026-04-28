@@ -64,7 +64,16 @@
       "Bash(node -e \"const { PrismaClient } = require\\('@prisma/client'\\); const { PrismaPg } = require\\('@prisma/adapter-pg'\\); const { Pool } = require\\('pg'\\); require\\('dotenv/config'\\); const pool = new Pool\\({ connectionString: process.env.DATABASE_URL }\\); const adapter = new PrismaPg\\(pool\\); const prisma = new PrismaClient\\({ adapter }\\); prisma.sessao.findFirst\\({ include: { usuario: { include: { empresa: true, perfil: { include: { permissoes: true } } } } } }\\).then\\(s => { console.log\\('Session found:', s ? 'YES' : 'NO'\\); if \\(s\\) { console.log\\('User:', s.usuario.email\\); console.log\\('perfil.isAdmin:', s.usuario.perfil?.isAdmin\\); console.log\\('permissoes:', s.usuario.perfil?.permissoes?.length\\); } process.exit\\(0\\); }\\).catch\\(e => { console.error\\(e\\); process.exit\\(1\\); }\\);\" 2>&1)",
       "Bash(curl -s \"https://brasilapi.com.br/api/cnpj/v1/12345678000190\" | head -100 2>&1)",
       "Bash(curl -s \"https://brasilapi.com.br/api/cnpj/v1/30734182000195\" 2>&1)",
-      "Bash(npm outdated:*)"
+      "Bash(npm outdated:*)",
+      "Bash(npm uninstall:*)",
+      "Bash(claude --version 2>/dev/null || claude -v 2>/dev/null || echo \"Versão não disponível via CLI\")",
+      "WebFetch(domain:docs.anthropic.com)",
+      "Bash(npm view:*)",
+      "Bash(npm update:*)",
+      "Bash(claude --version)",
+      "Bash(npx svelte-check *)",
+      "Bash(npx svelte-kit *)",
+      "Bash(git commit -m ' *)"
     ]
   }
 }

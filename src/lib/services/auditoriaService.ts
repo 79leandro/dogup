@@ -4,7 +4,7 @@ import type { EnumAuditoria } from '@prisma/client';
 export interface AuditLogEntry {
 	usuarioId: string;
 	usuarioNome: string;
-	empresaId: string;
+	contadorId: string;
 	acao: EnumAuditoria;
 	entidade: string;
 	entidadeId: string;
@@ -20,7 +20,7 @@ export async function registrarAuditoria(entry: AuditLogEntry): Promise<void> {
 		data: {
 			usuarioId: entry.usuarioId,
 			usuarioNome: entry.usuarioNome,
-			empresaId: entry.empresaId,
+			contadorId: entry.contadorId,
 			acao: entry.acao,
 			entidade: entry.entidade,
 			entidadeId: entry.entidadeId,
@@ -47,7 +47,7 @@ export interface AuditoriaRegistro {
 	id: string;
 	usuarioId: string;
 	usuarioNome: string;
-	empresaId: string;
+	contadorId: string;
 	acao: EnumAuditoria;
 	entidade: string;
 	entidadeId: string;
@@ -59,13 +59,13 @@ export interface AuditoriaRegistro {
 }
 
 export async function listarAuditoria(
-	empresaId: string,
+	contadorId: string,
 	options?: ListAuditoriaOptions
 ): Promise<AuditoriaRegistro[]> {
 	const prisma = getPrisma();
 
 	const where: Record<string, any> = {
-		empresaId
+		contadorId
 	};
 
 	if (options?.entidade) {

@@ -21,7 +21,7 @@ export const GET: RequestHandler = async (event) => {
 		const limit = parseInt(url.searchParams.get('limit') ?? '50');
 		const offset = parseInt(url.searchParams.get('offset') ?? '0');
 
-		const registros = await listarAuditoria(user.empresaId, {
+		const registros = await listarAuditoria(user.contadorId, {
 			entidade,
 			entidadeId,
 			usuarioId,

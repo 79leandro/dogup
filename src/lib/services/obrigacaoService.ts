@@ -34,7 +34,7 @@ export interface DCTFWebData {
 }
 
 export async function listObrigacoes(
-	empresaId: string,
+	contadorId: string,
 	filters?: {
 		tipo?: TipoObrigacao;
 		status?: StatusObrigacao;
@@ -45,7 +45,7 @@ export async function listObrigacoes(
 	const prisma = getPrisma();
 	return prisma.obrigacao.findMany({
 		where: {
-			cliente: { empresaId },
+			cliente: { contadorId },
 			...(filters?.tipo && { tipo: filters.tipo }),
 			...(filters?.status && { status: filters.status }),
 			...(filters?.ano && { ano: filters.ano }),
@@ -55,7 +55,7 @@ export async function listObrigacoes(
 			cliente: {
 				select: {
 					id: true,
-					cnpj: true,
+					documento: true,
 					nomeRazao: true
 				}
 			}
@@ -64,23 +64,23 @@ export async function listObrigacoes(
 	});
 }
 
-export async function getObrigacaoStats(empresaId: string) {
+export async function getObrigacaoStats(contadorId: string) {
 	const prisma = getPrisma();
 	const [total, entregue, naoEntregue, emProcessamento, inconsistencia] = await Promise.all([
 		prisma.obrigacao.count({
-			where: { cliente: { empresaId } }
+			where: { cliente: { contadorId } }
 		}),
 		prisma.obrigacao.count({
-			where: { cliente: { empresaId }, status: 'ENTREGUE' }
+			where: { cliente: { contadorId }, status: 'ENTREGUE' }
 		}),
 		prisma.obrigacao.count({
-			where: { cliente: { empresaId }, status: 'NAO_ENTREGUE' }
+			where: { cliente: { contadorId }, status: 'NAO_ENTREGUE' }
 		}),
 		prisma.obrigacao.count({
-			where: { cliente: { empresaId }, status: 'EM_PROCESSAMENTO' }
+			where: { cliente: { contadorId }, status: 'EM_PROCESSAMENTO' }
 		}),
 		prisma.obrigacao.count({
-			where: { cliente: { empresaId }, status: 'INCONSISTENCIA' }
+			where: { cliente: { contadorId }, status: 'INCONSISTENCIA' }
 		})
 	]);
 
@@ -96,7 +96,7 @@ export async function getObrigacaoStats(empresaId: string) {
 
 export async function createObrigacao(
 	data: CreateObrigacaoDTO,
-	empresaId: string,
+	contadorId: string,
 	user: AuditUser,
 	ipAddress?: string | null,
 	userAgent?: string | null
@@ -112,7 +112,7 @@ export async function createObrigacao(
 			cliente: {
 				select: {
 					id: true,
-					cnpj: true,
+					documento: true,
 					nomeRazao: true
 				}
 			}
@@ -122,7 +122,7 @@ export async function createObrigacao(
 	await registrarAuditoria({
 		usuarioId: user.id,
 		usuarioNome: user.nome,
-		empresaId,
+		contadorId,
 		acao: 'CREATE',
 		entidade: 'Obrigacao',
 		entidadeId: result.id,
@@ -136,7 +136,7 @@ export async function createObrigacao(
 
 export async function updateObrigacaoStatus(
 	id: string,
-	empresaId: string,
+	contadorId: string,
 	status: StatusObrigacao,
 	reciboUrl: string | undefined,
 	user: AuditUser,
@@ -145,7 +145,13 @@ export async function updateObrigacaoStatus(
 ) {
 	const prisma = getPrisma();
 
-	const dadosAntigos = await prisma.obrigacao.findUnique({ where: { id } });
+	const dadosAntigos = await prisma.obrigacao.findFirst({
+		where: { id, cliente: { contadorId } }
+	});
+
+	if (!dadosAntigos) {
+		throw new Error('Obrigação não encontrada');
+	}
 
 	const result = await prisma.obrigacao.update({
 		where: { id },
@@ -158,7 +164,7 @@ export async function updateObrigacaoStatus(
 	await registrarAuditoria({
 		usuarioId: user.id,
 		usuarioNome: user.nome,
-		empresaId,
+		contadorId,
 		acao: 'UPDATE',
 		entidade: 'Obrigacao',
 		entidadeId: id,
@@ -195,7 +201,7 @@ export async function simulateDCTFWebTransmission(
 }
 
 export async function getObrigacoesPorVencer(
-	empresaId: string,
+	contadorId: string,
 	dias: number = 7
 ) {
 	const prisma = getPrisma();
@@ -207,7 +213,7 @@ export async function getObrigacoesPorVencer(
 	// This would need a vencimento field - for now return upcoming by mes/ano
 	return prisma.obrigacao.findMany({
 		where: {
-			cliente: { empresaId },
+			cliente: { contadorId },
 			status: 'NAO_ENTREGUE',
 			// Simple logic: current month or next
 			OR: [
@@ -229,7 +235,7 @@ export async function getObrigacoesPorVencer(
 			cliente: {
 				select: {
 					id: true,
-					cnpj: true,
+					documento: true,
 					nomeRazao: true
 				}
 			}

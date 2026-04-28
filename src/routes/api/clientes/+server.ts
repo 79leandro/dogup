@@ -8,7 +8,8 @@ import {
 	getClienteStats,
 	getSituacaoFiscalStats
 } from '$lib/services/clienteService';
-import { validateCNPJ, removeMascaraCNPJ } from '$lib/utils/cnpj';
+import { validateCNPJ, validateCPF, removeMascaraCNPJ, removeMascaraCPF } from '$lib/utils/cnpj';
+import type { TipoPessoa } from '@prisma/client';
 
 export const GET: RequestHandler = async (event) => {
 	try {
@@ -23,18 +24,18 @@ export const GET: RequestHandler = async (event) => {
 
 		if (stats) {
 			const [clienteStats, situacaoStats] = await Promise.all([
-				getClienteStats(user.empresaId),
-				getSituacaoFiscalStats(user.empresaId)
+				getClienteStats(user.contadorId),
+				getSituacaoFiscalStats(user.contadorId)
 			]);
 			return json({ ...clienteStats, situacao: situacaoStats });
 		}
 
 		if (query) {
-			const clientes = await searchClientes(user.empresaId, query);
+			const clientes = await searchClientes(user.contadorId, query);
 			return json({ clientes });
 		}
 
-		const clientes = await listClientes(user.empresaId);
+		const clientes = await listClientes(user.contadorId);
 		return json({ clientes });
 	} catch (error) {
 		console.error('GET clientes error:', error);
@@ -52,24 +53,34 @@ export const POST: RequestHandler = async (event) => {
 		const data = await event.request.json();
 
 		// Basic validation
-		if (!data.cnpj || !data.nomeRazao || !data.regime) {
+		if (!data.documento || !data.nomeRazao || !data.regime) {
 			return json(
-				{ error: 'CNPJ, Razão Social e Regime são campos obrigatórios' },
+				{ error: 'Documento (CPF/CNPJ), Razão Social e Regime são campos obrigatórios' },
 				{ status: 400 }
 			);
 		}
 
-		// Validate CNPJ (supports both numeric and alphanumeric formats)
-		const cnpjClean = removeMascaraCNPJ(data.cnpj).toUpperCase();
-		if (!validateCNPJ(cnpjClean)) {
-			return json({ error: 'CNPJ inválido' }, { status: 400 });
+		// Validate documento (CPF or CNPJ)
+		const tipoPessoa: TipoPessoa = data.tipoPessoa || 'PJ';
+		let documentoClean: string;
+
+		if (tipoPessoa === 'PF') {
+			documentoClean = removeMascaraCPF(data.documento);
+			if (!validateCPF(documentoClean)) {
+				return json({ error: 'CPF inválido' }, { status: 400 });
+			}
+		} else {
+			documentoClean = removeMascaraCNPJ(data.documento).toUpperCase();
+			if (!validateCNPJ(documentoClean)) {
+				return json({ error: 'CNPJ inválido' }, { status: 400 });
+			}
 		}
 
-		// Check if CNPJ already exists
+		// Check if documento already exists
 		const { getPrisma } = await import('$lib/server/prisma');
 		const prisma = getPrisma();
-		const existingCliente = await prisma.cliente.findUnique({
-			where: { cnpj: cnpjClean }
+		const existingCliente = await prisma.clienteFinal.findUnique({
+			where: { documento: documentoClean }
 		});
 
 		if (existingCliente) {
@@ -80,10 +91,11 @@ export const POST: RequestHandler = async (event) => {
 		const userAgent = event.request.headers.get('user-agent');
 
 		const cliente = await createCliente(
-			user.empresaId,
+			user.contadorId,
 			{
 				...data,
-				cnpj: cnpjClean
+				tipoPessoa,
+				documento: documentoClean
 			},
 			{ id: user.id, nome: user.nome },
 			ipAddress,

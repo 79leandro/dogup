@@ -28,19 +28,19 @@ export const GET: RequestHandler = async (event) => {
 		}> = [];
 
 		// Search clientes
-		const clientes = await searchClientes(user.empresaId, query);
+		const clientes = await searchClientes(user.contadorId, query);
 		for (const cliente of clientes.slice(0, 5)) {
 			results.push({
 				id: cliente.id,
 				type: 'cliente',
 				titulo: cliente.nomeRazao,
-				subtitulo: cliente.cnpj,
+				subtitulo: cliente.documento,
 				href: `/dashboard/clientes/${cliente.id}`
 			});
 		}
 
 		// Search obrigacoes (by tipo or cliente nome)
-		const obrigacoes = await listObrigacoes(user.empresaId);
+		const obrigacoes = await listObrigacoes(user.contadorId);
 		const filteredObrigacoes = obrigacoes.filter(o => {
 			const tipoMatch = o.tipo.toLowerCase().includes(query.toLowerCase());
 			const clienteMatch = o.cliente.nomeRazao.toLowerCase().includes(query.toLowerCase());
